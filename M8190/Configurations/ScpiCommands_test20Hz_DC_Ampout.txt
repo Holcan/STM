@@ -1,0 +1,11 @@
+:INST:COUP:STAT 0
+:OUTP1:ROUT DC
+:OUTP1 ON
+:ABOR1 
+:ABOR2 
+:TRAC1:IQIM 1, "C:\Users\a.hernandez.de.la.ve\AppData\Local\Keysight\M8190\9708.wfmTmp.bin", BIN, IONLY, ON, ALEN
+:FREQ:RAST 125000640
+:ABOR1 
+:ABOR2 
+:INIT:IMM1 
+

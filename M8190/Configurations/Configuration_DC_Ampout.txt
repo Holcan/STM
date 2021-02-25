@@ -1,0 +1,280 @@
+<setting type="setup">
+  <pin name="CHANNEL 1">
+    <attribute name="ArmMode" value="0" />
+    <attribute name="CarrierFrequencyFractional" value="0" />
+    <attribute name="CarrierFrequencyIntegral" value="2000000000" />
+    <attribute name="CarrierPhaseOffset" value="0" />
+    <attribute name="CarrierScale" value="1" />
+    <attribute name="ChannelDelay" value="0" />
+    <attribute name="ChannelDelayCoarse" value="0" />
+    <attribute name="ChannelsCoupled" value="0" />
+    <attribute name="ContinuousMode" value="1" />
+    <attribute name="DisableHwDynamicSelect" value="0" />
+    <attribute name="DisableHwEnable" value="0" />
+    <attribute name="DisableHwEvent" value="0" />
+    <attribute name="DisableHwTrigger" value="0" />
+    <attribute name="DynamicSelect" value="0" />
+    <attribute name="EnableMarker" value="1" />
+    <attribute name="FunctionMode" value="0" />
+    <attribute name="GatedMode" value="0" />
+    <attribute name="OutputBalance" value="0" />
+    <attribute name="OutputNormalState" value="1" />
+    <attribute name="OutputRoute" value="1" />
+    <attribute name="ReducedNoiseFloorEnabled" value="0" />
+    <attribute name="SampleFormat" value="1" />
+    <attribute name="ScenarioAdvance" value="0" />
+    <attribute name="ScenarioCount" value="1" />
+    <attribute name="SegmentAdvance" value="0" />
+    <attribute name="SegmentLoops" value="1" />
+    <attribute name="SequenceTableScenarioSelect" value="0" />
+    <attribute name="SequenceTableSequenceSelect" value="0" />
+    <attribute name="StreamingLite" value="0" />
+    <attribute name="SwDynamicSelect" value="0" />
+    <attribute name="WaveformSelect" value="2" />
+  </pin>
+  <pin name="CHANNEL 1 AMP OUT">
+    <attribute name="DcAmplitude" value="0.3" />
+    <attribute name="DcDacFormatMode" value="2" />
+    <attribute name="DcOffset" value="0" />
+    <attribute name="DcTermination" value="0" />
+  </pin>
+  <pin name="CHANNEL 1 DIRECT OUT">
+    <attribute name="DacAmplitude" value="0.675" />
+    <attribute name="DacDacFormatMode" value="1" />
+    <attribute name="DacOffset" value="0" />
+  </pin>
+  <pin name="CHANNEL 1 N">
+    <attribute name="OutputComplementState" value="0" />
+  </pin>
+  <pin name="CHANNEL 1 RF OUT">
+    <attribute name="AcAmplitude" value="0.3" />
+    <attribute name="AcDacFormatMode" value="1" />
+  </pin>
+  <pin name="CHANNEL 1 SAMPLE MRK OUT">
+    <attribute name="SampleMarkerAmplitude" value="0.5" />
+    <attribute name="SampleMarkerOffset" value="0.25" />
+  </pin>
+  <pin name="CHANNEL 2">
+    <attribute name="ArmMode" value="0" />
+    <attribute name="CarrierFrequencyFractional" value="0" />
+    <attribute name="CarrierFrequencyIntegral" value="2000000000" />
+    <attribute name="CarrierPhaseOffset" value="0" />
+    <attribute name="CarrierScale" value="1" />
+    <attribute name="ChannelDelay" value="0" />
+    <attribute name="ChannelDelayCoarse" value="0" />
+    <attribute name="ChannelsCoupled" value="0" />
+    <attribute name="ContinuousMode" value="1" />
+    <attribute name="DisableHwDynamicSelect" value="0" />
+    <attribute name="DisableHwEnable" value="0" />
+    <attribute name="DisableHwEvent" value="0" />
+    <attribute name="DisableHwTrigger" value="0" />
+    <attribute name="DynamicSelect" value="0" />
+    <attribute name="EnableMarker" value="1" />
+    <attribute name="FunctionMode" value="0" />
+    <attribute name="GatedMode" value="0" />
+    <attribute name="OutputBalance" value="0" />
+    <attribute name="OutputNormalState" value="0" />
+    <attribute name="OutputRoute" value="0" />
+    <attribute name="ReducedNoiseFloorEnabled" value="0" />
+    <attribute name="SampleFormat" value="1" />
+    <attribute name="ScenarioAdvance" value="0" />
+    <attribute name="ScenarioCount" value="1" />
+    <attribute name="SegmentAdvance" value="0" />
+    <attribute name="SegmentLoops" value="1" />
+    <attribute name="SequenceTableScenarioSelect" value="0" />
+    <attribute name="SequenceTableSequenceSelect" value="0" />
+    <attribute name="StreamingLite" value="0" />
+    <attribute name="SwDynamicSelect" value="0" />
+    <attribute name="WaveformSelect" value="1" />
+  </pin>
+  <pin name="CHANNEL 2 AMP OUT">
+    <attribute name="DcAmplitude" value="0.75" />
+    <attribute name="DcDacFormatMode" value="2" />
+    <attribute name="DcOffset" value="0" />
+    <attribute name="DcTermination" value="0" />
+  </pin>
+  <pin name="CHANNEL 2 DIRECT OUT">
+    <attribute name="DacAmplitude" value="0.675" />
+    <attribute name="DacDacFormatMode" value="1" />
+    <attribute name="DacOffset" value="0" />
+  </pin>
+  <pin name="CHANNEL 2 N">
+    <attribute name="OutputComplementState" value="0" />
+  </pin>
+  <pin name="CHANNEL 2 RF OUT">
+    <attribute name="AcAmplitude" value="1.5" />
+    <attribute name="AcDacFormatMode" value="1" />
+  </pin>
+  <pin name="CHANNEL 2 SAMPLE MRK OUT">
+    <attribute name="SampleMarkerAmplitude" value="0.5" />
+    <attribute name="SampleMarkerOffset" value="0.25" />
+  </pin>
+  <pin name="DYNAMIC CONTROL IN">
+    <attribute name="DynamicSelectWidth" value="1" />
+  </pin>
+  <pin name="EVENT IN">
+    <attribute name="EventImpedance" value="0" />
+    <attribute name="EventPolarity" value="0" />
+    <attribute name="EventThreshold" value="0.5" />
+  </pin>
+  <pin name="INTERNAL">
+    <attribute name="EnableSource" value="0" />
+    <attribute name="EventSource" value="1" />
+    <attribute name="ReferenceClockSource" value="3" />
+    <attribute name="SampleFrequency" value="127000320" />
+  </pin>
+  <pin name="LPN ACTIVE">
+    <attribute name="LpnActive" value="0" />
+  </pin>
+  <pin name="LPN ENABLE">
+    <attribute name="LpnEnable" value="0" />
+  </pin>
+  <pin name="OUT">
+    <attribute name="SampleClockSource" value="0" />
+  </pin>
+  <pin name="REFCLK IN">
+    <attribute name="ReferenceFrequencyExternal" value="100000000" />
+  </pin>
+  <pin name="SAMPLE CLK IN">
+    <attribute name="SampleFrequencyExternal" value="7200000000" />
+  </pin>
+  <pin name="SAMPLE CLK OUT">
+    <attribute name="SampleClockOut" value="0" />
+  </pin>
+  <pin name="SYNC MRK OUT 1">
+    <attribute name="SyncMarkerAmplitude" value="0.5" />
+    <attribute name="SyncMarkerOffset" value="0.25" />
+  </pin>
+  <pin name="SYNC MRK OUT 2">
+    <attribute name="SyncMarkerAmplitude" value="0.5" />
+    <attribute name="SyncMarkerOffset" value="0.25" />
+  </pin>
+  <pin name="TRIGGER IN">
+    <attribute name="TriggerFrequency" value="1" />
+    <attribute name="TriggerImpedance" value="0" />
+    <attribute name="TriggerPolarity" value="0" />
+    <attribute name="TriggerSource" value="0" />
+    <attribute name="TriggerThreshold" value="0.5" />
+  </pin>
+  <sfp>
+    <panel name="StandardWaveform">
+      <attribute name="OutputMode" value="14 Bit" />
+      <attribute name="IsGenerateIQData" value="False" />
+      <attribute name="IsChannel1" value="True" />
+      <attribute name="IsChannel2" value="False" />
+      <attribute name="SegmentChannel1" value="4" />
+      <attribute name="SegmentChannel2" value="1" />
+      <attribute name="WaveformType" value="0" />
+      <attribute name="WaveformFrequency" value="20" />
+      <attribute name="InitialPhase" value="0" />
+      <attribute name="DutyCycle" value="50" />
+      <attribute name="RiseTime" value="0.005" />
+      <attribute name="FallTime" value="0.005" />
+      <attribute name="Symmetry" value="50" />
+      <attribute name="SincLength" value="4" />
+      <attribute name="CrestFactor" value="6" />
+      <attribute name="NoiseBandwidth" value="1000000000" />
+      <attribute name="PreambleLength" value="0" />
+      <attribute name="PreambleLevel" value="0" />
+      <attribute name="PostambleLength" value="0" />
+      <attribute name="PostambleLevel" value="0" />
+      <attribute name="IsKeepPeriods" value="False" />
+      <attribute name="Periods" value="1" />
+      <attribute name="WaveformLength" value="6350016" />
+      <attribute name="MaximumWaveformLength" value="1010612736" />
+      <attribute name="IsKeepSampleRate" value="False" />
+      <attribute name="SampleRate" value="127000320" />
+      <attribute name="DacMax" value="1" />
+      <attribute name="DacMin" value="-1" />
+      <attribute name="SampleMarker" value="0" />
+      <attribute name="SyncMarker" value="0" />
+    </panel>
+    <panel name="ImportWaveform">
+      <attribute name="OutputMode" value="14 Bit" />
+      <attribute name="FileFormat" value="7" />
+      <attribute name="HasMarker" value="False" />
+      <attribute name="IsChannel1" value="True" />
+      <attribute name="IsChannel2" value="False" />
+      <attribute name="SegmentChannel1" value="2" />
+      <attribute name="SegmentChannel2" value="1" />
+      <attribute name="ResamplingMode" value="0" />
+      <attribute name="WaveformLength" value="7680" />
+      <attribute name="SourceSampleRate" value="127000320" />
+      <attribute name="BasebandSampleRate" value="127000320" />
+      <attribute name="StartSample" value="0" />
+      <attribute name="StopSample" value="7679" />
+      <attribute name="IsScaling" value="True" />
+      <attribute name="DacMax" value="1" />
+      <attribute name="DacMin" value="-1" />
+    </panel>
+    <panel name="MultiToneWaveform">
+      <attribute name="OutputMode" value="14 Bit" />
+      <attribute name="IsGenerateIQData" value="False" />
+      <attribute name="IsSpectrumReversed" value="False" />
+      <attribute name="IsChannel1" value="True" />
+      <attribute name="IsChannel2" value="False" />
+      <attribute name="SegmentChannel1" value="1" />
+      <attribute name="SegmentChannel2" value="1" />
+      <attribute name="ToneDistribution" value="0" />
+      <attribute name="StartFrequency" value="100000000" />
+      <attribute name="StopFrequency" value="1000000000" />
+      <attribute name="ToneSpacing" value="100000000" />
+      <attribute name="NumOfTones" value="10" />
+      <attribute name="PhaseDistribution" value="1" />
+      <attribute name="Seed" value="1" />
+      <attribute name="IsActivateNotch" value="False" />
+      <attribute name="NotchStartTone" value="1" />
+      <attribute name="NotchStopTone" value="1" />
+      <attribute name="NotchCenterFrequency" value="100000000" />
+      <attribute name="NotchSpan" value="200000000" />
+      <attribute name="CorrectionMode" value="0" />
+      <attribute name="IsApplyCorrections" value="False" />
+      <attribute name="WaveformLength" value="1440" />
+      <attribute name="MaximumWaveformLength" value="1610612736" />
+      <attribute name="IsKeepSampleRate" value="False" />
+      <attribute name="SampleRate" value="8000000000" />
+      <attribute name="DacMax" value="1" />
+      <attribute name="DacMin" value="-1" />
+      <attribute name="SampleMarker" value="0" />
+      <attribute name="SyncMarker" value="0" />
+    </panel>
+    <panel name="ComplexModulation">
+      <attribute name="OutputMode" value="14 Bit" />
+      <attribute name="Modulation Type" value="1" />
+      <attribute name="IsGenerateIQData" value="False" />
+      <attribute name="IsApplyOffsetFrequency" value="False" />
+      <attribute name="IsSpectrumReversed" value="False" />
+      <attribute name="IsChannel1" value="True" />
+      <attribute name="IsChannel2" value="False" />
+      <attribute name="SegmentChannel1" value="1" />
+      <attribute name="SegmentChannel2" value="1" />
+      <attribute name="ModulationScheme" value="2" />
+      <attribute name="Carrier/Offset Frequency" value="1000000000" />
+      <attribute name="SymbolRate" value="500000000" />
+      <attribute name="FrequencyDeviation" value="250000" />
+      <attribute name="ModulationIndex" value="100" />
+      <attribute name="R2/R1 Ratio" value="2.84" />
+      <attribute name="R3/R1 Ratio" value="5.27" />
+      <attribute name="BasebandFilter" value="2" />
+      <attribute name="Alpha/BT" value="0.35" />
+      <attribute name="DataSource" value="2" />
+      <attribute name="DataLength" value="2047" />
+      <attribute name="CorrectionMode" value="0" />
+      <attribute name="IsApplyCorrections" value="False" />
+      <attribute name="WaveformLength" value="98256" />
+      <attribute name="MaximumWaveformLength" value="1610612736" />
+      <attribute name="IsKeepSampleRate" value="False" />
+      <attribute name="SampleRate" value="8000000000" />
+      <attribute name="DacMax" value="1" />
+      <attribute name="DacMin" value="-1" />
+      <attribute name="SampleMarker" value="0" />
+      <attribute name="SyncMarker" value="0" />
+    </panel>
+    <panel name="SequenceTable">
+      <attribute name="ReadFromChannel1" value="True" />
+      <attribute name="ReadFromChannel2" value="False" />
+      <attribute name="SendToChannel1" value="True" />
+      <attribute name="SendToChannel2" value="False" />
+    </panel>
+  </sfp>
+</setting>
