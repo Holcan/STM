@@ -1,0 +1,7 @@
+1.- Install Kezsight IO librarz
+2.- Install instruments drivers and software (provided in CD/online)
+3.-Power up instrument, wait till access led is green, connect via usb to computer and turn on computer.
+4.- Open Instruments software (in this case M8190A software) and get VISA direction and local host name.
+ (Should have already install the Visa and PyVisa modules in Python)
+5.- Use this information to add instrument to "Keysights connection expert" via LAN
+6.-Import Pyvisa into python script and add instrument via VISA adress with open.resource.
