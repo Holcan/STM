@@ -1,11 +1,11 @@
 'Here are the Dictionaries that correspond to the Pulses and the AWG settings'
-'Time is given in $\mu$seconds, Amplitude is Voltage in milivolts.'
+'Time is given in micro seconds, Amplitude is Voltage in milivolts.'
 
 
-M8190A_S1={
+AWG_S1={
     'Visa_Resource_Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
     'Amplitude':300,
-    'Clock Sample Frecuency':925000000,
+    'Clock Sample Frecuency':7200000000,
     'Output_Channel': 1,
     'Output_rout': 'DC'
 
