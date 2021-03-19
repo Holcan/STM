@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 def sweep0(Pulse,P,p,t):
     
@@ -63,3 +64,29 @@ def Sweep(PulList,P,p,t,N):
         pulscheme += pularray[i]
         
     return pulscheme, time
+
+
+def CSV_PD(pulse_array,segment,name):
+    
+    """This funcion converts pulse segments numpy arrays into csv files and appends the corresponding markers using pandas. It outputs the correspondant DataFrame
+
+
+        Segment A correspond to the positive probe pulse and is sync with the marker channels via "1" markers.
+        
+        Segment B correspond to the negative probe pulse and is sync with the marker channels via the "0" markers.
+    """
+
+    Seg = pd.DataFrame( pulse_array,columns=['Y1'] )
+
+    #marker condition
+    if segment == "B":
+        Markers = pd.DataFrame(np.zeros((len(pulse_array),2),dtype=int),columns=['SyncMarker1','SampleMarker1'])
+
+    if segment == "A":
+        Markers = pd.DataFrame(np.ones((len(pulse_array),2),dtype=int),columns=['SyncMarker1','SampleMarker1'])
+
+    SegMark = pd.concat([Seg,Markers],axis = 1)
+
+    SegMark.to_csv('{n}.csv'.format(n = name),index = False)
+
+    return SegMark
