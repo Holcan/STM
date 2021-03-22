@@ -21,6 +21,7 @@ def sweep0(Pulse,P,p,t):
         #Sweeping with respect to time
         if Pulse['Sweep time'] == 1:
             dt = (Pulse['End time'] - Pulse['Start time'])/P
+            
 
         if Pulse['Sweep Duration'] == 0:
             dτ = 0
@@ -28,12 +29,15 @@ def sweep0(Pulse,P,p,t):
         #Sweeping with respect to Duration
         if Pulse['Sweep Duration'] == 1:
             dτ = (Pulse['End Duration'] - Pulse['Start Duration'])/P
+            
 
 
         new_start = p * dt + Pulse['Start time']
         new_duration = p * dτ + Pulse['Start Duration']
         
         pol = Pulse['Amplitude'] * (new_start <= t <= new_duration + new_start)
+        
+          
         return pol
     
     else:
@@ -46,7 +50,7 @@ def Sweep(PulList,P,p,t,N):
     This function is a generalization of the sweep0(Pulse,P,p,t).
     It calls it and maps it over every Pulse in the list of pulses PulList.
     If two pulses overlap, their amplitude is added up.
-    P gives the number of sample points for the overal pulse scheme, not to be confuced with dt, the sweeping time step given by P
+    P gives the number of sample points for the overal pulse scheme, not to be confused with dt, the sweeping time step given by P
     """
     
     #time interval
@@ -74,6 +78,8 @@ def CSV_PD(pulse_array,segment,name):
         Segment A correspond to the positive probe pulse and is sync with the marker channels via "1" markers.
         
         Segment B correspond to the negative probe pulse and is sync with the marker channels via the "0" markers.
+
+        the csv file will have be named by 'name'
     """
 
     Seg = pd.DataFrame( pulse_array,columns=['Y1'] )

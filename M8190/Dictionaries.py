@@ -25,7 +25,7 @@ Rabi={
     'Amplitude':200,
     'Start time':1e-10,
     'End time':2e-10,
-    'Start Duration':2,
+    'Start Duration':1,
     'End Duration':6,
     'Sweep time':0,
     'Sweep Duration':0
@@ -34,11 +34,11 @@ Rabi={
 Probe1={
     'Name':'Probe1',
     'Amplitude':50,
-    'Start time':3,
-    'End time':20,
-    'Start Duration':2,
+    'Start time':1,
+    'End time':4,
+    'Start Duration':1,
     'End Duration':9 ,
-    'Sweep time':0,
+    'Sweep time':1,
     'Sweep Duration':0
 }
 
@@ -56,11 +56,11 @@ Rabi2={
 Probe2={
     'Name':'Probe2',
     'Amplitude':-50,
-    'Start time':3,
-    'End time':20,
-    'Start Duration':2,
+    'Start time':1,
+    'End time':4,
+    'Start Duration':1,
     'End Duration':9,
-    'Sweep time':0,
+    'Sweep time':1,
     'Sweep Duration':0
 }
 
@@ -85,3 +85,23 @@ PulsoH={
     'Sweep time':1,
     'Sweep Duration':0
 }
+
+#Pulse Sequences = Lists of Dictionaries
+
+Pulses_List = [
+    Rabi,Probe1
+    ]  ;
+
+
+
+Pulses_List2 = [
+    Rabi,Probe2
+    ];
+
+PScheme=[
+    Rabi, PulsoG
+    ];
+
+PScheme2=[
+    Rabi2, PulsoH
+    ]
