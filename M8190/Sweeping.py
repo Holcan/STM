@@ -67,7 +67,7 @@ def Sweep(PulList,P,p,t,N):
     for i in range(0,len(pularray)):
         pulscheme += pularray[i]
         
-    return pulscheme, time
+    return pulscheme
 
 
 def CSV_PD(pulse_array,segment,name):
@@ -96,3 +96,22 @@ def CSV_PD(pulse_array,segment,name):
     SegMark.to_csv('{n}.csv'.format(n = name),index = False)
 
     return SegMark
+
+
+def Tau(PulList,P,t,N):
+
+    """ This function iterates the Sweep function over the range(0,P)
+
+        This function creates an array, whose entries are the corresponding pulse sequences
+        at different sweeping steps p. The sweeping advance step is 1.  So far the p time step is ambiguous since here is not really used.
+        for accesing a specific sweep step use Sweeping instead.
+    """
+
+    time = np.linspace(-1e-10,t,N)
+    pultau = np.zeros((P+1,len(time)))
+
+
+    for i in range(P+1):
+        pultau[i]= Sweep(PulList,P,i,t,N)
+
+    return pultau, time
