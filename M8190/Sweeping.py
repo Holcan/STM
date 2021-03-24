@@ -115,3 +115,23 @@ def Tau(PulList,P,t,N):
         pultau[i]= Sweep(PulList,P,i,t,N)
 
     return pultau, time
+
+
+
+def Param(t,Δt):
+
+    """This function gives the sample size N and the sampling rate Sr to be used for proper 
+        pulse time scale.
+        
+        This function takes the desired total pulse time length and the desired time resolution
+        and outputs the corresponding Sapmle size N to be used in the Sweeping function and it 
+        also gives the Sample rate Sr to be set in the AWG, in order to get the proper
+        time scale within the Pulse from the AWG. Everything should be in the correct units
+    """
+    #for the sampling rate we have 
+    sr=(Δt)**-1
+
+    #for the sample size N
+    N=t*sr 
+
+    return N,sr
