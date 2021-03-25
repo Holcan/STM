@@ -4,7 +4,7 @@
 
 AWG_S1={
     'Visa_Resource_Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
-    'Amplitude':300,
+    'Voltage Amplitude':300,
     'Clock Sample Frecuency':125000000,
     'Output_Channel': 1,
     'Output_rout': 'DC'

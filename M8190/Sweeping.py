@@ -70,17 +70,19 @@ def Sweep(PulList,P,p,t,N):
     return pulscheme
 
 
-def CSV_PD(pulse_array,segment,name):
+def CSV_PD(pulse_array0,AWG,segment,step):
     
     """This funcion converts pulse segments numpy arrays into csv files and appends the corresponding markers using pandas. It outputs the correspondant DataFrame
 
+        It also normalizes pulse_array by the value of the voltage given in the settings dictionary AWG
 
         Segment A correspond to the positive probe pulse and is sync with the marker channels via "1" markers.
         
         Segment B correspond to the negative probe pulse and is sync with the marker channels via the "0" markers.
 
-        the csv file will have be named by 'name'
+        the csv file will have be named:
     """
+    pulse_array = pulse_array0/AWG['Voltage Amplitude']
 
     Seg = pd.DataFrame( pulse_array,columns=['Y1'] )
 
@@ -93,26 +95,31 @@ def CSV_PD(pulse_array,segment,name):
 
     SegMark = pd.concat([Seg,Markers],axis = 1)
 
-    SegMark.to_csv('{n}.csv'.format(n = name),index = False)
+    SegMark.to_csv('Segment{seg}_{n}_{nm}.csv'.format(seg = segment,n = len(pulse_array),nm=step),index = False)
 
     return SegMark
 
 
-def Tau(PulList,P,t,N):
+def Tau(PulList,P,t,N,start,stop):
 
-    """ This function iterates the Sweep function over the range(0,P)
+    """ This function iterates the Sweep function over the interval [start,stop] for a given pulse list PulList
 
         This function creates an array, whose entries are the corresponding pulse sequences
-        at different sweeping steps p. The sweeping advance step is 1.  So far the p time step is ambiguous since here is not really used.
-        for accesing a specific sweep step use Sweeping instead.
+        at different sweeping steps p, starting at the sweeping step p =start and ending at sweeping step p=stop.
+        The sweeping advance step is 1. 
+        The set [start,stop] must be contained in the bigger set [0,P].
+        In order to access a specific sweeping step use the Sweeping function instead.
     """
 
     time = np.linspace(-1e-10,t,N)
-    pultau = np.zeros((P+1,len(time)))
-
-
-    for i in range(P+1):
-        pultau[i]= Sweep(PulList,P,i,t,N)
+    interval = (stop-start)+1
+    pultau = np.zeros((interval,len(time)))
+    if (start==0 and stop == P):
+        for p in range(start,stop+1):
+            pultau[p] = Sweep(PulList,P,p,t,N)
+    else:
+        for p in range(start,stop+1):
+            pultau[(p+start-P)]= Sweep(PulList,P,p,t,N) 
 
     return pultau, time
 
@@ -135,3 +142,27 @@ def Param(t,Δt):
     N=t*sr 
 
     return N,sr
+
+
+
+
+
+
+
+def TDF_CVS(pultau,AWG,segment):
+
+    """ This function produces the corresponging normalized CSV files given by the entries of the pultau array
+
+        It uses the CSV_PD function to produce the CSV files asociated to each sweeping iteration.
+        It also outputs the DataFrames dictionary, whose elements are the Data Frames asociated to the CSV files.
+    """
+    
+    #pultau, tim= Tau(PulList,P,t,N,start,stop)
+
+    DataFrames={}
+    for i in range(len(pultau)):
+        DataFrames['Data Frame Segment{seg}, data={val}, step{n}'.format( seg = segment ,val =len(pultau),n=i)] = CSV_PD(pultau[i],AWG,segment,i)
+
+    return  DataFrames
+
+  
