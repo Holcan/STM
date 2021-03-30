@@ -57,7 +57,7 @@ Probe2={
     'Name':'Probe2',
     'Amplitude':-50,
     'Start time':1,
-    'End time':4,
+    'End time':11,
     'Start Duration':1,
     'End Duration':9,
     'Sweep time':1,

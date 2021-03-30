@@ -112,14 +112,11 @@ def Tau(PulList,P,t,N,start,stop):
     """
 
     time = np.linspace(-1e-10,t,N)
-    interval = (stop-start)+1
-    pultau = np.zeros((interval,len(time)))
-    if (start==0 and stop == P):
-        for p in range(start,stop+1):
-            pultau[p] = Sweep(PulList,P,p,t,N)
-    else:
-        for p in range(start,stop+1):
-            pultau[(p+start-P)]= Sweep(PulList,P,p,t,N) 
+    L = (stop-start)
+    pultau = np.zeros((L+1,len(time)))
+    
+    for p in range(0,L+1):
+        pultau[(p)]= Sweep(PulList,P,p+start,t,N) 
 
     return pultau, time
 
