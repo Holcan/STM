@@ -7,7 +7,8 @@ AWG_S1={
     'Voltage Amplitude':300,
     'Clock Sample Frecuency':125000000,
     'Output_Channel': 1,
-    'Output_rout': 'DC'
+    'Output_rout': 'DC',
+    'Data Directory': r'D:\Alejandro\Pulses\Dict'
 
 }
 
@@ -16,7 +17,8 @@ AWG_S2={
     'Amplitude':300,
     'Clock Sample Frecuency':7200000000,
     'Output_Channel': 1,
-    'Output_rout': 'DC'
+    'Output_rout': 'DC',
+    'Data Directory': r'D:\Alejandro\Pulses\Dict'
 
 }
 
