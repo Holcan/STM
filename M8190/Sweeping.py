@@ -108,3 +108,31 @@ def Param(t,Δt):
     N=t*sr 
 
     return N,sr
+
+
+
+def Sweept(PulList,P,p,t,N):
+    
+    """Function that perfoms or not a Sweep, depending on the Sweep dictionary keys, for the Pulse Scheme PulList.
+    
+    This function is a generalization of the sweep0(Pulse,P,p,t).
+    It calls it and maps it over every Pulse in the list of pulses PulList.
+    If two pulses overlap, their amplitude is added up.
+    P gives the number of sample points for the overal pulse scheme, not to be confused with dt, the sweeping time step given by P
+    """
+    
+    #time interval
+    time = np.linspace(-1e-10,t,N)
+    #Each pulse will be an array, and an entry of a bigger array (we have an array of arrays)
+    pularray = np.zeros((len(PulList),len(time)))
+    
+    for i in range(0,len(PulList)):
+        pularray[i] = np.array([sweep0(PulList[i],P,p,x) for x in time])
+        
+    #the final pulse scheme will be the overlap of each individual pulse, given by the sum of their arrays    
+    pulscheme = np.zeros(len(pularray[0]))
+    
+    for i in range(0,len(pularray)):
+        pulscheme += pularray[i]
+        
+    return pulscheme, time

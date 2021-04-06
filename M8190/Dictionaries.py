@@ -35,7 +35,7 @@ Rabi={
 
 Probe1={
     'Name':'Probe1',
-    'Amplitude':50,
+    'Amplitude':100,
     'Start time':1,
     'End time':11,
     'Start Duration':1,
@@ -46,7 +46,7 @@ Probe1={
 
 Rabi2={
     'Name':'Rabi2',
-    'Amplitude':-100,
+    'Amplitude':-200,
     'Start time':1,
     'End time':2e-10,
     'Start Duration':2,
@@ -57,7 +57,7 @@ Rabi2={
 
 Probe2={
     'Name':'Probe2',
-    'Amplitude':-50,
+    'Amplitude':-100,
     'Start time':1,
     'End time':11,
     'Start Duration':1,

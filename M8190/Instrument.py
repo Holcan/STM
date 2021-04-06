@@ -32,10 +32,15 @@ def Init(instrument,AWG):
         The Sampling frecuency is set as well, given by the corresponding key.
     """
     instrument.write('INST:COUP:STAT 0') #Decoupling the channels
+    instrument.query('*OPC?')
     instrument.write('OUTP1:ROUT DC') #setting the output to DC 
+    instrument.query('*OPC?')
     instrument.write('OUTP1 ON') #activating the output "Amp Out"
+    instrument.query('*OPC?')
     instrument.write('DC1:VOLT:AMPL {volt}'.format(volt = AWG['Voltage Amplitude']/1000)) #Setting voltage amplitude
+    instrument.query('*OPC?')
     instrument.write('FREQ:RAST {sr}'.format(sr = AWG['Clock Sample Frecuency']))  #Setting the sample rate
+    instrument.query('*OPC?')
     #print(instrument.query('FREQ:RAST?'))
     print('Instruments Sampling Frecuency set to {a}Hz'.format(a = instrument.query('FREQ:RAST?')))
     print('Instruments DC1 Output Voltage set to {V}deciVolts'.format(V = instrument.query('DC1:VOLT:AMPL?')))
@@ -73,9 +78,14 @@ def AtS(instrument,id,pulse_array0,AWG,marker,step):
 
 
 
-def SeqL(instrument,pulse_array0,pulse_array1,AWG,step):
+def SeqL(instrument,pulse_array0,pulse_array1,AWG,step,loop):
 
-    "one punch is all I need"
+    """This function exports numpy pulse arrays into csv files and then loads them into a sequence in the AWG
+    
+    pulse_array0 will be assigned and marked as segment A, pulse_array1 will be assigned and marked as segment B
+    
+    
+    """
 
     c, datac= AtS(instrument, 1, pulse_array0, AWG, 1, step)
     b, dataB= AtS(instrument, 2,pulse_array1, AWG, 0, step)
@@ -83,20 +93,21 @@ def SeqL(instrument,pulse_array0,pulse_array1,AWG,step):
     a = int(instrument.query('SEQ1:DEF:NEW? 2'))
 
     #Loading Segment 1 to step 0 of Sequence 0
-    instrument.write('SEQ1:DATA {seqid},0,1,1,0,1,0,#hFFFFFFFF'.format(seqid = a))
+    instrument.write('SEQ1:DATA {seqid},0,1,{l},0,1,0,#hFFFFFFFF'.format(seqid = a, l = loop))
     instrument.query('*OPC?')
 
 
     #Loading Segment 2 to step 1 of Sequence 0
-    instrument.write('SEQ1:DATA {seqid},1,2,1,0,1,0,#hFFFFFFFF'.format(seqid = a))
+    instrument.write('SEQ1:DATA {seqid},1,2,{l},0,1,0,#hFFFFFFFF'.format(seqid = a, l = loop))
     instrument.query('*OPC?')
 
-    #instrument.write('STAB1:SEQ:SEL {t}'.format(t = a))
+    instrument.write('FUNC1:MODE STS')
+    instrument.write('STAB1:SEQ:SEL {t}'.format(t = a))
 
     print('Sequence loaded with the following segment data "{d}"'.format(d = instrument.query('SEQ1:DATA? {e},0,2'.format(e=a))))
 
 
-def SeqF(instrument,file0,file1):
+def SeqF(instrument,file0,file1,loop):
 
     """ Creates a sequence in the instrument by the data in file0 and file1 csv files.
 
@@ -115,30 +126,36 @@ def SeqF(instrument,file0,file1):
     #instrument.write('[:SOURce]:SEQuence[1|2]:DATA <sequence_id>, <step> , <segment_id>, <loop_count>,<advance_mode>,<marker_enable>, <start_addr>,<end_addr>
 
     #Loading Segment 1 to step 0 of Sequence 0
-    instrument.write('SEQ1:DATA {seqid},0,1,1,0,1,0,#hFFFFFFFF'.format(seqid = a))
+    instrument.write('SEQ1:DATA {seqid},0,1,{l},0,1,0,#hFFFFFFFF'.format(seqid = a, l =loop))
     instrument.query('*OPC?')
 
     #Loading Segment 2 to step 1 of Sequence 0
-    instrument.write('SEQ1:DATA {seqid},1,2,1,0,1,0,#hFFFFFFFF'.format(seqid = a))
+    instrument.write('SEQ1:DATA {seqid},1,2,{l},0,1,0,#hFFFFFFFF'.format(seqid = a, l = loop))
     instrument.query('*OPC?')
     
+    instrument.write('FUNC1:MODE STS')
+    instrument.write('STAB1:SEQ:SEL {t}'.format(t = a))
+
     print('Sequence loaded with the following segment data "{b}"'.format(b = instrument.query('SEQ1:DATA? {c},0,2'.format(c=a))))
 
     return a
 
 
-def AtSeq(instrument,pulse_array0,pulse_array1,AWG,step):
+def AtSeq(instrument,pulse_array0,pulse_array1,AWG,step,loop):
 
     """This function loads 2 numpy pulse data arrays into a sequence in the AWG
 
+        needs check up
 
     """
     #Creating cvs files and loading them to the AWG
-    a,segmentA= AtS(instrument,1,pulse_array0,AWG,1,step)
-    b,segmentB= AtS(instrument,2,pulse_array1,AWG,0,step)
+    c, datac= AtS(instrument, 1, pulse_array0, AWG, 1, step)
+    b, dataB= AtS(instrument, 2,pulse_array1, AWG, 0, step)
 
-    seqid = SeqF(instrument, a, b)
-    instrument.write('STAB1:SEQ:SEL {t}'.format(t = seqid))
 
-    return segmentA, segmentB 
+    seqid= SeqF(instrument, c, b, loop)
+
+    return seqid, datac, dataB 
   
+
+
