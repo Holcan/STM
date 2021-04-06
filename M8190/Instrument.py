@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from Sweeping import *
 from Dictionaries import * 
+from PulseFiles import *
 import pyvisa as visa
 
 def VisaR(AWG,time):
@@ -44,76 +45,100 @@ def FileL(instrument,File,id):
     """
     This functions loads the csv file "File" into the AWG as a Segment whose Id is id.
 
+    This function uses the TRAC Subsystem of the AWG, alongside with SCPI. The AWG may create a segment whose length is larger than the data size to
+    account for the granularity, but that does not alters any value within the sample data.
     """
-    inst.write('TRAC1:IQIM {segmentid}, "{a}", CSV, BOTH, ON, ALEN'.format(segmentid= id,a=r'{Fil}'.format(Fil=File)))
-    inst.query('*OPC?')
+    instrument.write('TRAC1:IQIM {segmentid}, "{a}", CSV, BOTH, ON, ALEN'.format(segmentid= id,a=r'{Fil}'.format(Fil=File)))
+    instrument.query('*OPC?')
 
 
 
 def AtS(instrument,id,pulse_array0,AWG,marker,step):
     
     """ This 'Array to segment' takes np pulse arrays and exports them as csv files, then it loads this files to the instrument.
-    
-        'instrument' correspond to the visa resource instrument object associated with our Instrument.
-        'id' corresponds to an positive integer, which will be the Segemet id within the Instrument.
-        'pulse_array0' should be the np array with the data of our pulse scheme.
-        'AWG' should be a dictionary, whose 'Voltage Amplitude' key is used to normalize the csv data (since the instrument only takes values from -1 to 1).
-        'marker' should be either 1 or 0, it assigns the given marker to the csv file.
-        'step' corresponds to the sweeping step of the Sweeping function.
+
+    The importing from np arrays into csv files is done with the CSV_PD function from Pulsefiles module.
+    The loading of this new csv file into the instrument as a new segment is perfomed with the FileL function.
+    'instrument' correspond to the visa resource instrument object associated with our Instrument.
+    'id' corresponds to an positive integer, which will be the Segemet id within the Instrument.
     """
-    #normalizing the data
-    pulse_array = pulse_array0/AWG['Voltage Amplitude']
-    Seg = pd.DataFrame( pulse_array,columns=['Y1'] )
-
-    #marker assignement
-    if marker == 0:
-        Markers = pd.DataFrame(np.zeros((len(pulse_array),2),dtype=int),columns=['SyncMarker1','SampleMarker1'])
-        segment = 'B' 
-
-    if marker == 1:
-        Markers = pd.DataFrame(np.ones((len(pulse_array),2),dtype=int),columns=['SyncMarker1','SampleMarker1'])
-        segment = 'A'
-
-    #Appending the markers
-    SegMark = pd.concat([Seg,Markers],axis = 1)
-
-    #string for the new csv file location
-    new_csv = r'{File_Location}\Segment{seg}_{n}_{nm}.csv'.format(File_Location = AWG['Data Directory'],seg=segment,n=len(pulse_array),nm=step)
-
-    #exporting the data frame
-    SegMark.to_csv(new_csv,index=False)
+    #creating the csv file using CSV_PD function
+    new_csv, SegMark = CSV_PD(pulse_array0, AWG, marker ,step)
 
     #sending the csv file to the instrument
-    instrument.write('TRAC1:IQIM {segmentid}, "{a}", CSV, BOTH, ON, ALEN'.format(segmentid= id,a=new_csv))
+    FileL(instrument, new_csv, id)
+    print('Current Segment Catalogue is {g}  [(segment id, Segment size)]'.format(g = instrument.query('TRAC:CAT?')))
+
+    return new_csv, SegMark
+
+
+
+def SeqL(instrument,pulse_array0,pulse_array1,AWG,step):
+
+    "one punch is all I need"
+
+    c, datac= AtS(instrument, 1, pulse_array0, AWG, 1, step)
+    b, dataB= AtS(instrument, 2,pulse_array1, AWG, 0, step)
+
+    a = int(instrument.query('SEQ1:DEF:NEW? 2'))
+
+    #Loading Segment 1 to step 0 of Sequence 0
+    instrument.write('SEQ1:DATA {seqid},0,1,1,0,1,0,#hFFFFFFFF'.format(seqid = a))
     instrument.query('*OPC?')
 
-    return SegMark
+
+    #Loading Segment 2 to step 1 of Sequence 0
+    instrument.write('SEQ1:DATA {seqid},1,2,1,0,1,0,#hFFFFFFFF'.format(seqid = a))
+    instrument.query('*OPC?')
+
+    #instrument.write('STAB1:SEQ:SEL {t}'.format(t = a))
+
+    print('Sequence loaded with the following segment data "{d}"'.format(d = instrument.query('SEQ1:DATA? {e},0,2'.format(e=a))))
 
 
-def Seq(instrument,pulse_array0,pulse_array1,AWG,step):
+def SeqF(instrument,file0,file1):
 
-    """ Sequences only for segment slots 1,2
+    """ Creates a sequence in the instrument by the data in file0 and file1 csv files.
+
+    This function first calls the FileL function to load the file0 and file1 csv files data files as segments into the instrument.
+    It then uses the AWG's SEQ subsystem to create a sequence from this two segments.This sequence is set to 1 loop count, auto advance mode
+    and starting and ending address correspond to the first and last value of the data files.
+    The SCPI query SEQ:DEF:NEW? returns the Sequence Id. as a string and this functions returns it as an int.
+    """
+    FileL(instrument, file0, 1)
+    FileL(instrument, file1, 2)
+
+    #Defining new sequence, 'a' will be the seq id.
+    a = int(instrument.query('SEQ1:DEF:NEW? 2'))
+
+    #loading segments into sequences within the Instrment has the following syntaxis:
+    #instrument.write('[:SOURce]:SEQuence[1|2]:DATA <sequence_id>, <step> , <segment_id>, <loop_count>,<advance_mode>,<marker_enable>, <start_addr>,<end_addr>
+
+    #Loading Segment 1 to step 0 of Sequence 0
+    instrument.write('SEQ1:DATA {seqid},0,1,1,0,1,0,#hFFFFFFFF'.format(seqid = a))
+    instrument.query('*OPC?')
+
+    #Loading Segment 2 to step 1 of Sequence 0
+    instrument.write('SEQ1:DATA {seqid},1,2,1,0,1,0,#hFFFFFFFF'.format(seqid = a))
+    instrument.query('*OPC?')
+    
+    print('Sequence loaded with the following segment data "{b}"'.format(b = instrument.query('SEQ1:DATA? {c},0,2'.format(c=a))))
+
+    return a
+
+
+def AtSeq(instrument,pulse_array0,pulse_array1,AWG,step):
+
+    """This function loads 2 numpy pulse data arrays into a sequence in the AWG
 
 
     """
     #Creating cvs files and loading them to the AWG
-    segmentA= AtS(instrument,1,pulse_array0,AWG,1,step)
-    segmentB= AtS(instrument,2,pulse_array1,AWG,0,step)
+    a,segmentA= AtS(instrument,1,pulse_array0,AWG,1,step)
+    b,segmentB= AtS(instrument,2,pulse_array1,AWG,0,step)
 
-    #Defining new sequence
-    instrument.query('SEQ1:DEF:NEW? 2')
+    seqid = SeqF(instrument, a, b)
+    instrument.write('STAB1:SEQ:SEL {t}'.format(t = seqid))
 
-
-    HERE
-    #loading sequences to the Instrment has the following syntaxis:
-    #instrument.write('[:SOURce]:SEQuence[1|2]:DATA <sequence_id>, <step> ,[<value>,<value>,…|<data block>] <segment_id>, <loop_count>,<advance_mode>,<marker_enable>, <start_addr>,<end_addr>
-
-    #instrument.write('SEQ1:DATA 0,0,1,1,0,1,0,#hFFFFFFFF'.format())
-
-    #Loading Segment 1 to step 0 of Sequence 0
-    #instrument.write('SEQ1:DATA 0,0,1,1,0,1,0,#hFFFFFFFF')
-
-    #Loading Segment 2 to step 1 of Sequence 0
-    #instrument.write('SEQ1:DATA 0,1,2,1,0,1,0,#hFFFFFFFF')
-
+    return segmentA, segmentB 
   
