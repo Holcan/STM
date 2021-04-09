@@ -53,6 +53,9 @@ def FileL(instrument,File,id):
     This function uses the TRAC Subsystem of the AWG, alongside with SCPI. The AWG may create a segment whose length is larger than the data size to
     account for the granularity, but that does not alters any value within the sample data.
     """
+    #precision mode for now, vector size in samples is multiple of 48
+    instrument.write('TRAC1:DWID WPR')
+    instrument.query('*OPC?')
     instrument.write('TRAC1:IQIM {segmentid}, "{a}", CSV, BOTH, ON, ALEN'.format(segmentid= id,a=r'{Fil}'.format(Fil=File)))
     instrument.query('*OPC?')
 
@@ -84,6 +87,7 @@ def SeqL(instrument,pulse_array0,pulse_array1,AWG,step,loop):
     
     pulse_array0 will be assigned and marked as segment A, pulse_array1 will be assigned and marked as segment B
     
+    OLD VERSION
     
     """
 
@@ -145,15 +149,18 @@ def AtSeq(instrument,pulse_array0,pulse_array1,AWG,step,loop):
 
     """This function loads 2 numpy pulse data arrays into a sequence in the AWG
 
-        needs check up
-
+    It utilises first the AtS function to creat th CSV files from the pulse_array0/1 numpy arrays
+    and then it imports them as segments to the AWG using the SeqF function
+    It outputs the sequence id of the newly define sequence, and the data frame of the segments.
     """
+
     #Creating cvs files and loading them to the AWG
     c, datac= AtS(instrument, 1, pulse_array0, AWG, 1, step)
     b, dataB= AtS(instrument, 2,pulse_array1, AWG, 0, step)
-
-
+    
+    #Importing the csv files to the AWG
     seqid= SeqF(instrument, c, b, loop)
+
 
     return seqid, datac, dataB 
   
