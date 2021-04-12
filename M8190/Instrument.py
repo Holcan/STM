@@ -17,7 +17,7 @@ def VisaR(AWG,time):
     It outputs the instruments pyvisa resource object
     """
     rm = visa.ResourceManager()
-    inst = rm.open_resource('{visa}'.format( visa = AWG['Visa_Resource_Name']))
+    inst = rm.open_resource('{visa}'.format( visa = AWG['Visa Resource Name']))
     inst.read_termination = '\n'
     inst.write_termination = '\n'
     inst.timeout = time
@@ -81,34 +81,7 @@ def AtS(instrument,id,pulse_array0,AWG,marker,step):
 
 
 
-def SeqL(instrument,pulse_array0,pulse_array1,AWG,step,loop):
 
-    """This function exports numpy pulse arrays into csv files and then loads them into a sequence in the AWG
-    
-    pulse_array0 will be assigned and marked as segment A, pulse_array1 will be assigned and marked as segment B
-    
-    OLD VERSION
-    
-    """
-
-    c, datac= AtS(instrument, 1, pulse_array0, AWG, 1, step)
-    b, dataB= AtS(instrument, 2,pulse_array1, AWG, 0, step)
-
-    a = int(instrument.query('SEQ1:DEF:NEW? 2'))
-
-    #Loading Segment 1 to step 0 of Sequence 0
-    instrument.write('SEQ1:DATA {seqid},0,1,{l},0,1,0,#hFFFFFFFF'.format(seqid = a, l = loop))
-    instrument.query('*OPC?')
-
-
-    #Loading Segment 2 to step 1 of Sequence 0
-    instrument.write('SEQ1:DATA {seqid},1,2,{l},0,1,0,#hFFFFFFFF'.format(seqid = a, l = loop))
-    instrument.query('*OPC?')
-
-    instrument.write('FUNC1:MODE STS')
-    instrument.write('STAB1:SEQ:SEL {t}'.format(t = a))
-
-    print('Sequence loaded with the following segment data "{d}"'.format(d = instrument.query('SEQ1:DATA? {e},0,2'.format(e=a))))
 
 
 def SeqF(instrument,file0,file1,loop):
@@ -166,3 +139,38 @@ def AtSeq(instrument,pulse_array0,pulse_array1,AWG,step,loop):
   
 
 
+
+
+
+
+
+
+
+def SeqL(instrument,pulse_array0,pulse_array1,AWG,step,loop):
+
+    """This function exports numpy pulse arrays into csv files and then loads them into a sequence in the AWG
+    
+    pulse_array0 will be assigned and marked as segment A, pulse_array1 will be assigned and marked as segment B
+    
+    OLD VERSION
+    
+    """
+
+    c, datac= AtS(instrument, 1, pulse_array0, AWG, 1, step)
+    b, dataB= AtS(instrument, 2,pulse_array1, AWG, 0, step)
+
+    a = int(instrument.query('SEQ1:DEF:NEW? 2'))
+
+    #Loading Segment 1 to step 0 of Sequence 0
+    instrument.write('SEQ1:DATA {seqid},0,1,{l},0,1,0,#hFFFFFFFF'.format(seqid = a, l = loop))
+    instrument.query('*OPC?')
+
+
+    #Loading Segment 2 to step 1 of Sequence 0
+    instrument.write('SEQ1:DATA {seqid},1,2,{l},0,1,0,#hFFFFFFFF'.format(seqid = a, l = loop))
+    instrument.query('*OPC?')
+
+    instrument.write('FUNC1:MODE STS')
+    instrument.write('STAB1:SEQ:SEL {t}'.format(t = a))
+
+    print('Sequence loaded with the following segment data "{d}"'.format(d = instrument.query('SEQ1:DATA? {e},0,2'.format(e=a))))
