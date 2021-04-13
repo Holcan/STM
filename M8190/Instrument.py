@@ -37,7 +37,7 @@ def Init(instrument,AWG):
     instrument.query('*OPC?')
     instrument.write('OUTP1 ON') #activating the output "Amp Out"
     instrument.query('*OPC?')
-    instrument.write('DC1:VOLT:AMPL {volt}'.format(volt = AWG['Voltage Amplitude']/1000)) #Setting voltage amplitude
+    instrument.write('DC1:VOLT:AMPL {volt}'.format(volt = AWG['Voltage Amplitude']/1000)) #Setting Normilized Voltage amplitude
     instrument.query('*OPC?')
     instrument.write('FREQ:RAST {sr}'.format(sr = AWG['Clock Sample Frecuency']))  #Setting the sample rate
     instrument.query('*OPC?')
@@ -63,7 +63,7 @@ def FileL(instrument,File,id):
 
 def AtS(instrument,id,pulse_array0,AWG,marker,step):
     
-    """ This 'Array to segment' takes np pulse arrays and exports them as csv files, then it loads this files to the instrument.
+    """ This 'Array to segment' takes np pulse arrays and exports them as csv files, then it loads these files to the instrument.
 
     The importing from np arrays into csv files is done with the CSV_PD function from Pulsefiles module.
     The loading of this new csv file into the instrument as a new segment is perfomed with the FileL function.
@@ -97,7 +97,7 @@ def SeqF(instrument,file0,file1,loop):
     FileL(instrument, file1, 2)
 
     #Defining new sequence, 'a' will be the seq id.
-    a = int(instrument.query('SEQ1:DEF:NEW? 2'))
+    seq_id = int(instrument.query('SEQ1:DEF:NEW? 2'))
 
     #loading segments into sequences within the Instrment has the following syntaxis:
     #instrument.write('[:SOURce]:SEQuence[1|2]:DATA <sequence_id>, <step> , <segment_id>, <loop_count>,<advance_mode>,<marker_enable>, <start_addr>,<end_addr>
@@ -115,7 +115,7 @@ def SeqF(instrument,file0,file1,loop):
 
     print('Sequence loaded with the following segment data "{b}"'.format(b = instrument.query('SEQ1:DATA? {c},0,2'.format(c=a))))
 
-    return a
+    return seq_id
 
 
 def AtSeq(instrument,pulse_array0,pulse_array1,AWG,step,loop):
@@ -146,31 +146,4 @@ def AtSeq(instrument,pulse_array0,pulse_array1,AWG,step,loop):
 
 
 
-def SeqL(instrument,pulse_array0,pulse_array1,AWG,step,loop):
 
-    """This function exports numpy pulse arrays into csv files and then loads them into a sequence in the AWG
-    
-    pulse_array0 will be assigned and marked as segment A, pulse_array1 will be assigned and marked as segment B
-    
-    OLD VERSION
-    
-    """
-
-    c, datac= AtS(instrument, 1, pulse_array0, AWG, 1, step)
-    b, dataB= AtS(instrument, 2,pulse_array1, AWG, 0, step)
-
-    a = int(instrument.query('SEQ1:DEF:NEW? 2'))
-
-    #Loading Segment 1 to step 0 of Sequence 0
-    instrument.write('SEQ1:DATA {seqid},0,1,{l},0,1,0,#hFFFFFFFF'.format(seqid = a, l = loop))
-    instrument.query('*OPC?')
-
-
-    #Loading Segment 2 to step 1 of Sequence 0
-    instrument.write('SEQ1:DATA {seqid},1,2,{l},0,1,0,#hFFFFFFFF'.format(seqid = a, l = loop))
-    instrument.query('*OPC?')
-
-    instrument.write('FUNC1:MODE STS')
-    instrument.write('STAB1:SEQ:SEL {t}'.format(t = a))
-
-    print('Sequence loaded with the following segment data "{d}"'.format(d = instrument.query('SEQ1:DATA? {e},0,2'.format(e=a))))

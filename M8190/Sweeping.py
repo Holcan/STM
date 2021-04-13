@@ -69,7 +69,7 @@ def Sweep(PulList,P,p,t,N):
         
     return pulscheme
 
-def Tau(PulList,P,t,N,start,stop):
+def Sweep_Iteration(PulList,P,t,N,start,stop):
 
     """ This function iterates the Sweep function over the interval [start,stop] for a given pulse list PulList
 
@@ -79,6 +79,7 @@ def Tau(PulList,P,t,N,start,stop):
         The set [start,stop] must be contained in the bigger set [0,P].
         In order to access a specific sweeping step use the Sweeping function instead.
     """
+    
 
     time = np.linspace(-1e-10,t,N)
     L = (stop-start)
@@ -86,6 +87,9 @@ def Tau(PulList,P,t,N,start,stop):
     
     for p in range(0,L+1):
         pultau[(p)]= Sweep(PulList,P,p+start,t,N) 
+
+    #this dictionary is for obtaining the proper name 
+    #Intervaldict={'start':start,'stop':stop,'interval':L}
 
     return pultau, time
 
@@ -113,6 +117,7 @@ def Param(t,Δt):
 
 def Sweept(PulList,P,p,t,N):
     
+    #Same as  Sweep function, but this one outputs the time interval too
     """Function that perfoms or not a Sweep, depending on the Sweep dictionary keys, for the Pulse Scheme PulList.
     
     This function is a generalization of the sweep0(Pulse,P,p,t).

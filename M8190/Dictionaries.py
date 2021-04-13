@@ -24,6 +24,18 @@ AWG_S2={
 
 }
 
+AWG_S3={
+    'Visa Resource Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
+    'Voltage Amplitude':300,
+    'Clock Sample Frecuency':500000000,
+    'Output_Channel': 1,
+    'Mode': 'STS',
+    'Output_rout': 'DC',
+    'Data Directory': r'D:\Documentos\STM\Python Pulses'
+
+}
+
+
 Rabi={
     'Name':'Rabi',
     'Amplitude':200,
