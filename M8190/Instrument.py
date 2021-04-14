@@ -96,24 +96,24 @@ def SeqF(instrument,file0,file1,loop):
     FileL(instrument, file0, 1)
     FileL(instrument, file1, 2)
 
-    #Defining new sequence, 'a' will be the seq id.
+    #Defining new sequence.
     seq_id = int(instrument.query('SEQ1:DEF:NEW? 2'))
 
     #loading segments into sequences within the Instrment has the following syntaxis:
     #instrument.write('[:SOURce]:SEQuence[1|2]:DATA <sequence_id>, <step> , <segment_id>, <loop_count>,<advance_mode>,<marker_enable>, <start_addr>,<end_addr>
 
     #Loading Segment 1 to step 0 of Sequence 0
-    instrument.write('SEQ1:DATA {seqid},0,1,{l},0,1,0,#hFFFFFFFF'.format(seqid = a, l =loop))
+    instrument.write('SEQ1:DATA {seqid},0,1,{l},0,1,0,#hFFFFFFFF'.format(seqid = seq_id, l =loop))
     instrument.query('*OPC?')
 
     #Loading Segment 2 to step 1 of Sequence 0
-    instrument.write('SEQ1:DATA {seqid},1,2,{l},0,1,0,#hFFFFFFFF'.format(seqid = a, l = loop))
+    instrument.write('SEQ1:DATA {seqid},1,2,{l},0,1,0,#hFFFFFFFF'.format(seqid = seq_id, l = loop))
     instrument.query('*OPC?')
     
     instrument.write('FUNC1:MODE STS')
-    instrument.write('STAB1:SEQ:SEL {t}'.format(t = a))
+    instrument.write('STAB1:SEQ:SEL {t}'.format(t = seq_id))
 
-    print('Sequence loaded with the following segment data "{b}"'.format(b = instrument.query('SEQ1:DATA? {c},0,2'.format(c=a))))
+    print('Sequence loaded with the following segment data "{b}"'.format(b = instrument.query('SEQ1:DATA? {c},0,2'.format(c=seq_id))))
 
     return seq_id
 

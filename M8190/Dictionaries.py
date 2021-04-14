@@ -41,7 +41,30 @@ Rabi={
     'Amplitude':200,
     'Start time':1e-10,
     'End time':2e-10,
-    'Start Duration':1,
+    'Start Duration':3,
+    'End Duration':6,
+    'Sweep time':0,
+    'Sweep Duration':0
+}
+
+Rabi2={
+    'Name':'Rabi2',
+    'Amplitude':-200,
+    'Start time':1e-10,
+    'End time':2e-10,
+    'Start Duration':3,
+    'End Duration':6,
+    'Sweep time':0,
+    'Sweep Duration':0
+}
+
+
+Rabi3={
+    'Name':'Rabi3',
+    'Amplitude':200,
+    'Start time':1e-10,
+    'End time':2e-10,
+    'Start Duration':7,
     'End Duration':6,
     'Sweep time':0,
     'Sweep Duration':0
@@ -50,42 +73,33 @@ Rabi={
 Probe1={
     'Name':'Probe1',
     'Amplitude':100,
-    'Start time':1,
-    'End time':11,
-    'Start Duration':1,
-    'End Duration':9 ,
+    'Start time':2,
+    'End time':12,
+    'Start Duration':2,
+    'End Duration':6,
     'Sweep time':1,
     'Sweep Duration':0
 }
 
-Rabi2={
-    'Name':'Rabi2',
-    'Amplitude':-200,
-    'Start time':1,
-    'End time':2e-10,
-    'Start Duration':2,
-    'End Duration':6,
-    'Sweep time':0,
-    'Sweep Duration':0
-}
+
 
 Probe2={
     'Name':'Probe2',
     'Amplitude':-100,
-    'Start time':1,
-    'End time':11,
-    'Start Duration':1,
-    'End Duration':9,
+    'Start time':2,
+    'End time':12,
+    'Start Duration':2,
+    'End Duration':96,
     'Sweep time':1,
     'Sweep Duration':0
 }
 
 PulsoG={
     'Name':'PulsoG',
-    'Amplitude':-50,
-    'Start time':2,
-    'End time':20,
-    'Start Duration':1,
+    'Amplitude':100,
+    'Start time':4,
+    'End time':14,
+    'Start Duration':2,
     'End Duration':9,
     'Sweep time':1,
     'Sweep Duration':0
@@ -93,10 +107,10 @@ PulsoG={
 
 PulsoH={
     'Name':'PulsoH',
-    'Amplitude':-50,
-    'Start time':3,
-    'End time':20,
-    'Start Duration':1,
+    'Amplitude':-100,
+    'Start time':4,
+    'End time':14,
+    'Start Duration':2,
     'End Duration':9,
     'Sweep time':1,
     'Sweep Duration':0

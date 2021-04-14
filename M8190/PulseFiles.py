@@ -41,7 +41,7 @@ def CSV_PD(pulse_array0,AWG,marker,step):
     return new_csv, SegMark
 
 
-def Sweep_Iteration_CSV0(pultau,AWG,segment,start):
+def Sweep_Iteration_CSV0(pultau,AWG,marker,start):
 
 #I should rename this function.
 
@@ -58,23 +58,23 @@ def Sweep_Iteration_CSV0(pultau,AWG,segment,start):
     DataFrames={}
     StrngName={}
     for i in range(len(pultau)):
-        StrngName['File Location at step {step}'.format(step=i+start)],DataFrames['Data Frame Segment{seg}, data={val}, step{n}'.format( seg = segment ,val =len(pultau),n=i+start)] = CSV_PD(pultau[i],AWG,segment,i+start)
+        StrngName['Pulse File Location, at step {step}'.format(step=i+start)],DataFrames['Segment{seg}_{val}_{n}'.format( seg = "A" if marker == 1 else "B" ,val =len(pultau[i]),n=i+start)] = CSV_PD(pultau[i],AWG,marker,i+start)
 
     return  StrngName,DataFrames
 
-def Swep_Iteration_csv(PulList,P,t,N,start,stop,AWG,segment):
+def Swep_Iteration_csv(PulList,P,t,N,start,stop,AWG,marker):
     
     """This function combinates the Sweep_Iteration function with the Sweep_Iteration_CSV0 function.
 
         Using the Sweep_Iteration function it creates numpy arrays corresponding to the pulse squemes at different sweep steps accordingly to the pulse Sweep keys in the 
         dictionaries of the PulList list. 
-        Then it uses the Sweep_Iteration_CSV0 function to import this numpy arrays to csv data files, with the desired markers given by the segment parameter, similar as in the 
+        Then it uses the Sweep_Iteration_CSV0 function to import this numpy arrays to csv data files, with the desired markers given by the marker parameter, similar as in the 
         CSV_PD functiuon.
         It returns the same StrngName and DataFrames dictionary  as the Sweep_Iteration_CSV0 function.
     """
 
     pultau,time = Sweep_Iteration(PulList,P,t,N,start,stop)
-    StrngName, DataFrames = Sweep_Iteration_CSV0(pultau,AWG,segment,start)
+    StrngName, DataFrames = Sweep_Iteration_CSV0(pultau,AWG,marker,start)
 
     return StrngName, DataFrames, time
 
