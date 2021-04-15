@@ -9,18 +9,18 @@ AWG_S1={
     'Output_Channel': 1,
     'Mode': 'STS',
     'Output_rout': 'DC',
-    'Data Directory': r'D:\Alejandro\Pulses\Dict'
+    'Data Directory': r'D:\Alejandro\Pulses\Dict\S1'
 
 }
 
 AWG_S2={
     'Visa Resource Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
-    'Amplitude':300,
-    'Clock Sample Frecuency':7200000000,
+    'Voltage Amplitude':300,
+    'Clock Sample Frecuency':500000000,
     'Output_Channel': 1,
     'Mode': 'STS',
     'Output_rout': 'DC',
-    'Data Directory': r'D:\Alejandro\Pulses\Dict'
+    'Data Directory': r'D:\Alejandro\Pulses\Dict\S2'
 
 }
 
@@ -41,7 +41,7 @@ Rabi={
     'Amplitude':200,
     'Start time':1e-10,
     'End time':2e-10,
-    'Start Duration':3,
+    'Start Duration':7,
     'End Duration':6,
     'Sweep time':0,
     'Sweep Duration':0
@@ -52,7 +52,7 @@ Rabi2={
     'Amplitude':-200,
     'Start time':1e-10,
     'End time':2e-10,
-    'Start Duration':3,
+    'Start Duration':7,
     'End Duration':6,
     'Sweep time':0,
     'Sweep Duration':0
@@ -73,9 +73,9 @@ Rabi3={
 Probe1={
     'Name':'Probe1',
     'Amplitude':100,
-    'Start time':2,
+    'Start time':8,
     'End time':12,
-    'Start Duration':2,
+    'Start Duration':4,
     'End Duration':6,
     'Sweep time':1,
     'Sweep Duration':0
@@ -86,10 +86,10 @@ Probe1={
 Probe2={
     'Name':'Probe2',
     'Amplitude':-100,
-    'Start time':2,
+    'Start time':8,
     'End time':12,
-    'Start Duration':2,
-    'End Duration':96,
+    'Start Duration':4,
+    'End Duration':6,
     'Sweep time':1,
     'Sweep Duration':0
 }
