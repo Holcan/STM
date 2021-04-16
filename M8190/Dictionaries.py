@@ -31,7 +31,7 @@ AWG_S3={
     'Output_Channel': 1,
     'Mode': 'STS',
     'Output_rout': 'DC',
-    'Data Directory': r'D:\Documentos\STM\Python Pulses'
+    'Data Directory': r'D:\Documentos\STM\Python Pulses\S3'
 
 }
 
