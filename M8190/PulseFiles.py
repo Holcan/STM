@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from Sweeping import *
 
-#The functions in this module are used to save the pulse numpy arrays as csv files, mainly using the pandas module and the geerated DataFrames
+#The functions in this module are used to save the pulse numpy arrays creeated by the Sweeping module functions as csv files, mainly using the pandas module and the generated DataFrames
 
 
 def CSV_PD(pulse_array0,AWG,marker,step):
