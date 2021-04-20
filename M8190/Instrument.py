@@ -8,12 +8,14 @@ from PulseFiles import *
 import pyvisa as visa
 from datetime import date
 
+#The functions within this module are used to interact with the instrument. From initializing settings, to loading segments and sequences into it.
+
 def VisaR(AWG,time):
 
     """ This function sets the pyvisa interface and sets the timeout time.
 
     This function enables the interaction between the computer and the instrument, throught the pyvisa module.
-    Before running this function, please make sure that the AgM8190 Firmware is was properly initialized.
+    Before running this function, please make sure that the AgM8190 Firmware is properly initialized.
     The Visa Address is given by corresponding key in the AWG dictionary.
     The time should be given in miliseconds.
     It prints the instruments manufacturer, model, serial number.
@@ -27,6 +29,10 @@ def VisaR(AWG,time):
     return inst
 
 def Instrument_Settings(instrument):
+    
+    """This function  returns a .txt file with the current instrument settings
+    """
+
     f=open("Settings_{dt}.txt".format(dt = date.today()),"w+")
     f.write("{settings}".format( settings= instrument.query('SYST:SET?')))
     f.close()
@@ -39,6 +45,7 @@ def Initialization(instrument,AWG):
         Instruments output " DC Amp out" is activated and the voltage is set to the value given in the AWG dictionary.
         The Sampling frecuency is set as well, given by the corresponding key.
     """
+
     instrument.write('INST:COUP:STAT 0') #Decoupling the channels
     instrument.query('*OPC?')
     instrument.write('OUTP1:ROUT DC') #setting the output to DC 
@@ -61,6 +68,7 @@ def Segment_File(instrument,File,id):
     This function uses the TRAC Subsystem of the AWG, alongside with SCPI. The AWG may create a segment whose length is larger than the data size to
     account for the granularity, but that does not alters any value within the sample data.
     """
+
     #precision mode for now, vector size in samples is multiple of 48
     instrument.write('TRAC1:DWID WPR')
     instrument.query('*OPC?')
@@ -117,6 +125,7 @@ def Def_Sequence(instrument,loop):
     
     
     instrument.write('STAB1:SEQ:SEL {t}'.format(t = seq_id))
+    instrument.query('*OPC?')
 
     print('Sequence loaded with the following segment data "{b}"'.format(b = instrument.query('SEQ1:DATA? {c},0,2'.format(c=seq_id))))
 
@@ -128,7 +137,7 @@ def Sequence_File(instrument,file0,file1,loop):
     """ Creates a sequence in the instrument by the data in file0 and file1 csv files.
 
     This function first calls the Segment_File function to load the file0 and file1 csv data files as segments into the instrument.
-    It then uses the AWG's SEQ subsystem to create a sequence from this two segments.This sequence is set to 1 loop count, auto advance mode
+    It then uses the AWG's SEQ subsystem to create a sequence from this two segments.This sequence is set to have "loop" loop count, auto advance mode
     and starting and ending address correspond to the first and last value of the data files.
     The SCPI query SEQ:DEF:NEW? returns the Sequence Id. as a string and this functions returns it as an int.
     """
@@ -139,13 +148,14 @@ def Sequence_File(instrument,file0,file1,loop):
     seq_id = Def_Sequence(instrument,loop)
     return seq_id
 
-def Sequence_Array(instrument,pulse_array0,pulse_array1,AWG,step,loop):
+def Sequence_Array0(instrument,pulse_array0,pulse_array1,AWG,step,loop):
 
     """This function loads 2 numpy pulse data arrays into a sequence in the AWG
 
     It utilizes first the Segment_Array function to import as segments the CSV files corresponding to 
     the pulse_array0/1 numpy arrays. Then it imports them as sequence to the AWG using the Sequence_File function.
     It outputs the sequence id of the newly define sequence, and the data frame of the segments.
+    pulse_array0 will have marker values = 1 and pulse_array1 will have marker values = 0.
     """
 
     #Creating cvs files and loading them to the AWG as segments
@@ -160,12 +170,36 @@ def Sequence_Array(instrument,pulse_array0,pulse_array1,AWG,step,loop):
   
 
 
+def Sequence_Array(PulseList1,PulseList2,P,p,t,N,instrument,AWG,loop):
 
-def Sequence_Loader(instrument,LocationA,LocationB,loop,sleeptime):
+    """This function takes pulse sequences lists as imput and with the given parameters loads them into the instrument.
+
+        This function combines the Sweep function with the Sequence_array0 function.
+    Sweep and Sweept work the same way but Sweept also returns the time inverval.
+    """
+
+    #creating the numpy array from the PulseList1
+    pulses1 = Sweep(PulseList1,P,p,t,N)
+
+    #creating the numpy array from the PulseList2
+    pulses2, time = Sweept(PulseList2,P,p,t,N)
+
+    #Loading the pulse numpy arrays into a sequence in the AWG.
+    seqid, dataframepulses1, dataframepulses2 = Sequence_Array0(instrument,pulses1,pulses2,AWG,p,loop)
+
+    return seqid, dataframepulses1, dataframepulses2, time
+
+
+
+
+
+def Sequence_Loader0(instrument,LocationA,LocationB,loop,sleeptime):
     
     """ This function loads the csv data files from the Location dictionaries into the instrument as a sequence.
 
-    It uses the SeqF function to load the files to the instrument.
+    LocationA is a dictionary, whose elements are the file paths to the csv files that are going to be loaded as SegmentA into the sequence.
+    LocationB is a dictionary, whose elemnts re the filepaths to the csv files that are going to be loaded as SegmentB into the sequence
+    It uses the Sequence_File function to load the csv files to the instrument.
     "sleeptime" is the time that the function waits before loading the next sequence, it is in seconds.
     """
     start = time.time()
@@ -176,14 +210,33 @@ def Sequence_Loader(instrument,LocationA,LocationB,loop,sleeptime):
         
         instrument.write('INIT:IMM')
         sleep(sleeptime)
-        instrument.write('ABOR')
+
+    instrument.write('ABOR')
    
     end = time.time()
 
     print(end-start)   
 
 
+def Sequence_Loader(PulseList1,PulseList2,P,t,N,start,stop,instrument,AWG,loop,sleeptime):
 
+    """ Given two pulse schemes lists, this functions iterates over them from start to stop and loads the corresponding sequence to the instrument
+
+        This function firts creates the corresponding pulse sequence data given the PulseLists using the Sweep_iteration_csv function
+        it thens loads them sequentially into the instrument using the Sequence_Loader0 function.
+    """
+
+    #SegmentA of the sequence
+    Loc1,DF1,timm = Swep_Iteration_csv(PulseList1,P,t,N,start,stop,AWG,1)
+
+    #SegmentB of the Sequence
+    Loc2,DF2,timm = Swep_Iteration_csv(PulseList2,P,t,N,start,stop,AWG,0)
+
+
+    #Loading the sequence iteratively into the instrument
+    Sequence_Loader0(instrument, Loc1, Loc2, loop, sleeptime)
+
+    return DF1,DF2,timm
 
 
 

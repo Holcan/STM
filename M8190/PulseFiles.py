@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from Sweeping import *
 
+#The functions in this module are used to save the pulse numpy arrays as csv files, mainly using the pandas module and the geerated DataFrames
 
 
 def CSV_PD(pulse_array0,AWG,marker,step):
@@ -43,9 +44,8 @@ def CSV_PD(pulse_array0,AWG,marker,step):
 
 def Sweep_Iteration_CSV0(pultau,AWG,marker,start):
 
-#I should rename this function.
 
-    """ This function produces the corresponging normalized CSV files given by the entries of the pultau array.
+    """ This function produces the corresponging normalized CSV files given by the entries of the pultau array(of arrays).
 
         This function is a generalize version of the CSV_PD function, and it works for the Pulse arrayes 
         given by the Sweep_Iteration function.

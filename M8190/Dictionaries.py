@@ -1,8 +1,8 @@
-'Here are the Dictionaries that correspond to the Pulses and the AWG settings'
-'Time is given in micro seconds, Amplitude is Voltage in milivolts.'
+#Here are the Dictionaries that correspond to the Pulses and the instrument settings
+#Time is given in micro seconds, Amplitude is Voltage in milivolts.
 
 
-AWG_S1={
+AWG_Settings1={
     'Visa Resource Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
     'Voltage Amplitude':300,
     'Clock Sample Frecuency':125000000,
@@ -13,7 +13,7 @@ AWG_S1={
 
 }
 
-AWG_S2={
+AWG_Settings2={
     'Visa Resource Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
     'Voltage Amplitude':300,
     'Clock Sample Frecuency':500000000,
@@ -24,7 +24,7 @@ AWG_S2={
 
 }
 
-AWG_S3={
+AWG_Settings3={
     'Visa Resource Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
     'Voltage Amplitude':300,
     'Clock Sample Frecuency':500000000,
