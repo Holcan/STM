@@ -8,7 +8,7 @@ from PulseFiles import *
 import pyvisa as visa
 from datetime import date
 
-#The functions within this module are used to interact with the instrument. From initializing settings, to loading segments and sequences into it.
+#The functions within this module are used to interact with the instrument. From initializing settings to loading segments and sequences into it.
 
 def VisaR(AWG,time):
 

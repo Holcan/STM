@@ -145,3 +145,53 @@ def Sweept(PulList,P,p,t,N):
         pulscheme += pularray[i]
         
     return pulscheme, time
+
+
+    def sweepslice(Pulse,P,p,t,N):
+    
+        """Sweeping function for a single pulse with respect of time and duration.
+
+        This function takes the Amplitude, Start and End time, Start and End and Duration of the Pulse dictionary.
+        Given a total number of points P, it calcultes the time step dt and the duration step dτ depending on 
+        the values of 'Sweep Duration' and 'Sweep time' keys. 
+        It then calculates the pulse shape up to the given p point at a time t.
+    
+        If both of the sweeping keys are equal to zero, it just gives the puls shape at 'Starting time' with 'Starting Duration' at  time t
+        """ 
+
+
+        time=np.linspace(0,t,N)
+        #Pulse array
+        pul=np.copy(time)
+
+        if 0 <= p <= P:
+        
+            if Pulse['Sweep time'] == 0:
+                dt = 0
+
+            #Sweeping with respect to time
+            if Pulse['Sweep time'] == 1:
+                dt = (Pulse['End time'] - Pulse['Start time'])/P
+            
+
+            if Pulse['Sweep Duration'] == 0:
+                dτ = 0
+
+            #Sweeping with respect to Duration
+            if Pulse['Sweep Duration'] == 1:
+                dτ = (Pulse['End Duration'] - Pulse['Start Duration'])/P
+            
+
+
+            new_start = p * dt + Pulse['Start time']
+            new_duration = p * dτ + Pulse['Start Duration']
+            new_end = new_duration + new_start
+    
+            pul[pul <= new_start] = 0
+            pul[pul >= new_end] = 0
+            pul[pul !=0] = Pulse['Amplitude']         
+          
+            return pul, time
+    
+        else:
+            print('p must be in the interval',[0,P])
