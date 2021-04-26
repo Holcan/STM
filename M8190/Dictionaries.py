@@ -39,7 +39,7 @@ AWG_Settings3={
 Rabi={
     'Name':'Rabi',
     'Amplitude':200,
-    'Start time':1e-10,
+    'Start time':0,
     'End time':2e-10,
     'Start Duration':7,
     'End Duration':6,
