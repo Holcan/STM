@@ -148,7 +148,7 @@ def Sequence_File(instrument,file0,file1,loop):
     seq_id = Def_Sequence(instrument,loop)
     return seq_id
 
-def Sequence_Array0(instrument,pulse_array0,pulse_array1,AWG,step,loop):
+def Sequence_Array(instrument,pulse_array0,pulse_array1,AWG,step,loop):
 
     """This function loads 2 numpy pulse data arrays into a sequence in the AWG
 
@@ -170,22 +170,22 @@ def Sequence_Array0(instrument,pulse_array0,pulse_array1,AWG,step,loop):
   
 
 
-def Sequence_Array(PulseList1,PulseList2,P,p,t,N,instrument,AWG,loop):
+def Sequence_Pulse_List(PulseList1,PulseList2,P,p,t,N,instrument,AWG,loop):
 
     """This function takes pulse sequences lists as imput and with the given parameters loads them into the instrument.
 
-        This function combines the Sweep function with the Sequence_array0 function.
+        This function combines the Sweep function with the Sequence_array function.
     Sweep and Sweept work the same way but Sweept also returns the time inverval.
     """
 
     #creating the numpy array from the PulseList1
-    pulses1 = Sweep(PulseList1,P,p,t,N)
+    pulses1,time = Sweep(PulseList1,P,p,t,N)
 
     #creating the numpy array from the PulseList2
-    pulses2, time = Sweept(PulseList2,P,p,t,N)
+    pulses2, time = Sweep(PulseList2,P,p,t,N)
 
     #Loading the pulse numpy arrays into a sequence in the AWG.
-    seqid, dataframepulses1, dataframepulses2 = Sequence_Array0(instrument,pulses1,pulses2,AWG,p,loop)
+    seqid, dataframepulses1, dataframepulses2 = Sequence_Array(instrument,pulses1,pulses2,AWG,p,loop)
 
     return seqid, dataframepulses1, dataframepulses2, time
 
@@ -193,7 +193,7 @@ def Sequence_Array(PulseList1,PulseList2,P,p,t,N,instrument,AWG,loop):
 
 
 
-def Sequence_Loader0(instrument,LocationA,LocationB,loop,sleeptime):
+def Sequence_Loader_File(instrument,LocationA,LocationB,loop,sleeptime):
     
     """ This function loads the csv data files from the Location dictionaries into the instrument as a sequence.
 
@@ -202,7 +202,7 @@ def Sequence_Loader0(instrument,LocationA,LocationB,loop,sleeptime):
     It uses the Sequence_File function to load the csv files to the instrument.
     "sleeptime" is the time that the function waits before loading the next sequence, it is in seconds.
     """
-    start = time.time()
+    
 
     for i,j in zip(LocationA, LocationB):
         Sequence_File(instrument,LocationA[i],LocationB[j],loop)
@@ -213,28 +213,26 @@ def Sequence_Loader0(instrument,LocationA,LocationB,loop,sleeptime):
 
     instrument.write('ABOR')
    
-    end = time.time()
-
-    print(end-start)   
+  
 
 
-def Sequence_Loader(PulseList1,PulseList2,P,t,N,start,stop,instrument,AWG,loop,sleeptime):
+def Sequence_Loader_List(PulseList1,PulseList2,P,t,N,start,stop,instrument,AWG,loop,sleeptime):
 
     """ Given two pulse schemes lists, this functions iterates over them from start to stop and loads the corresponding sequence to the instrument
 
         This function firts creates the corresponding pulse sequence data given the PulseLists using the Sweep_iteration_csv function
-        it thens loads them sequentially into the instrument using the Sequence_Loader0 function.
+        it thens loads them sequentially into the instrument using the Sequence_Loader_File function.
     """
 
     #SegmentA of the sequence
-    Loc1,DF1,timm = Swep_Iteration_csv(PulseList1,P,t,N,start,stop,AWG,1)
+    Loc1,DF1,timm = Sweep_Iteration_CSV_List(PulseList1,P,t,N,start,stop,AWG,1)
 
     #SegmentB of the Sequence
-    Loc2,DF2,timm = Swep_Iteration_csv(PulseList2,P,t,N,start,stop,AWG,0)
+    Loc2,DF2,timm = Sweep_Iteration_CSV_List(PulseList2,P,t,N,start,stop,AWG,0)
 
 
     #Loading the sequence iteratively into the instrument
-    Sequence_Loader0(instrument, Loc1, Loc2, loop, sleeptime)
+    Sequence_Loader_File(instrument, Loc1, Loc2, loop, sleeptime)
 
     return DF1,DF2,timm
 

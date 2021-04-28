@@ -42,17 +42,19 @@ def CSV_PD(pulse_array0,AWG,marker,step):
     return new_csv, SegMark
 
 
-def Sweep_Iteration_CSV0(pultau,AWG,marker,start):
+def Sweep_Iteration_CSV_Arrays(pultau,AWG,marker,start):
 
 
     """ This function produces the corresponging normalized CSV files given by the entries of the pultau array(of arrays).
 
         This function is a generalize version of the CSV_PD function, and it works for the Pulse arrayes 
         given by the Sweep_Iteration function.
+        pultau is an array of arrays.
         It uses the CSV_PD function to produce the CSV files asociated to each sweeping iteration.
         It outputs 2 dictionaries: the StrngName and the DataFrames dictionary.
         The StrngName dictionary has the csv files directory\name 's stored in the directory given by the corresponding AWG key.
-        The DataFrames dictionary  has as elements the Data Frames asociated to the CSV files.  
+        The DataFrames dictionary  has as elements the Data Frames asociated to the CSV files.
+        Start refers to the starting sweeping step  of the Sweep_Iteration function
     """
 
     DataFrames={}
@@ -62,19 +64,19 @@ def Sweep_Iteration_CSV0(pultau,AWG,marker,start):
 
     return  StrngName,DataFrames
 
-def Swep_Iteration_csv(PulList,P,t,N,start,stop,AWG,marker):
+def Sweep_Iteration_CSV_List(PulList,P,t,N,start,stop,AWG,marker):
     
-    """This function combinates the Sweep_Iteration function with the Sweep_Iteration_CSV0 function.
+    """This function combinates the Sweep_Iteration function with the Sweep_Iteration_CSV_Arrays function.
 
         Using the Sweep_Iteration function it creates numpy arrays corresponding to the pulse squemes at different sweep steps accordingly to the pulse Sweep keys in the 
         dictionaries of the PulList list. 
-        Then it uses the Sweep_Iteration_CSV0 function to import this numpy arrays to csv data files, with the desired markers given by the marker parameter, similar as in the 
+        Then it uses the Sweep_Iteration_CSV_Arrays function to import this numpy arrays to csv data files, with the desired markers given by the marker parameter, similar as in the 
         CSV_PD functiuon.
-        It returns the same StrngName and DataFrames dictionary  as the Sweep_Iteration_CSV0 function.
+        It returns the same StrngName and DataFrames dictionary  as the Sweep_Iteration_CSV_Arrays function.
     """
 
     pultau,time = Sweep_Iteration(PulList,P,t,N,start,stop)
-    StrngName, DataFrames = Sweep_Iteration_CSV0(pultau,AWG,marker,start)
+    StrngName, DataFrames = Sweep_Iteration_CSV_Arrays(pultau,AWG,marker,start)
 
     return StrngName, DataFrames, time
 

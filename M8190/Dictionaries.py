@@ -41,7 +41,7 @@ Rabi={
     'Amplitude':200,
     'Start time':0,
     'End time':2e-10,
-    'Start Duration':7,
+    'Start Duration':1,
     'End Duration':6,
     'Sweep time':0,
     'Sweep Duration':0
@@ -52,7 +52,7 @@ Rabi2={
     'Amplitude':-200,
     'Start time':1e-10,
     'End time':2e-10,
-    'Start Duration':7,
+    'Start Duration':1,
     'End Duration':6,
     'Sweep time':0,
     'Sweep Duration':0
@@ -73,9 +73,9 @@ Rabi3={
 Probe1={
     'Name':'Probe1',
     'Amplitude':100,
-    'Start time':8,
+    'Start time':2,
     'End time':12,
-    'Start Duration':4,
+    'Start Duration':3,
     'End Duration':6,
     'Sweep time':1,
     'Sweep Duration':0
@@ -86,9 +86,9 @@ Probe1={
 Probe2={
     'Name':'Probe2',
     'Amplitude':-100,
-    'Start time':8,
+    'Start time':2,
     'End time':12,
-    'Start Duration':4,
+    'Start Duration':3,
     'End Duration':6,
     'Sweep time':1,
     'Sweep Duration':0
