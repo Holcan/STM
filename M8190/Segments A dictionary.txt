@@ -1,0 +1,1 @@
+{'Pulse File Location, at step 2': 'D:\\Alejandro\\Pulses\\Dict\\S2\\SegmentA_7500000_2.csv', 'Pulse File Location, at step 3': 'D:\\Alejandro\\Pulses\\Dict\\S2\\SegmentA_7500000_3.csv', 'Pulse File Location, at step 4': 'D:\\Alejandro\\Pulses\\Dict\\S2\\SegmentA_7500000_4.csv'}
