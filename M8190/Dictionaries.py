@@ -97,8 +97,8 @@ Probe2={
 PulsoG={
     'Name':'PulsoG',
     'Amplitude':100,
-    'Start time':4,
-    'End time':14,
+    'Start time':2,
+    'End time':12,
     'Start Duration':2,
     'End Duration':9,
     'Sweep time':1,
@@ -108,8 +108,8 @@ PulsoG={
 PulsoH={
     'Name':'PulsoH',
     'Amplitude':-100,
-    'Start time':4,
-    'End time':14,
+    'Start time':2,
+    'End time':12,
     'Start Duration':2,
     'End Duration':9,
     'Sweep time':1,

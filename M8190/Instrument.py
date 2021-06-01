@@ -111,6 +111,8 @@ def Def_Sequence(instrument,loop):
 
     #Defining new sequence.
     seq_id = int(instrument.query('SEQ1:DEF:NEW? 2'))
+    instrument.write('SEQ:ADV {seqid},REP'.format(seqid = seq_id))
+
 
     #loading segments into sequences within the Instrment has the following syntaxis:
     #instrument.write('[:SOURce]:SEQuence[1|2]:DATA <sequence_id>, <step> , <segment_id>, <loop_count>,<advance_mode>,<marker_enable>, <start_addr>,<end_addr>
@@ -210,6 +212,7 @@ def Sequence_Loader_File(instrument,LocationA,LocationB,loop,sleeptime):
         
         instrument.write('INIT:IMM')
         sleep(sleeptime)
+        instrument.write('ABOR')
 
     instrument.write('ABOR')
    
