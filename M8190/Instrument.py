@@ -109,9 +109,9 @@ def Def_Sequence(instrument,loop):
     instrument.write('FUNC1:MODE STS')
     instrument.query('*OPC?')
 
-    #Defining new sequence.
+    #Defining new sequence, The SCPI query SEQ:DEF:NEW? returns the Sequence Id. as a string and this functions returns it as an int.
     seq_id = int(instrument.query('SEQ1:DEF:NEW? 2'))
-    instrument.write('SEQ:ADV {seqid},REP'.format(seqid = seq_id))
+    #instrument.write('SEQ:ADV {seqid},REP'.format(seqid = seq_id))
 
 
     #loading segments into sequences within the Instrment has the following syntaxis:
@@ -141,7 +141,7 @@ def Sequence_File(instrument,file0,file1,loop):
     This function first calls the Segment_File function to load the file0 and file1 csv data files as segments into the instrument.
     It then uses the AWG's SEQ subsystem to create a sequence from this two segments.This sequence is set to have "loop" loop count, auto advance mode
     and starting and ending address correspond to the first and last value of the data files.
-    The SCPI query SEQ:DEF:NEW? returns the Sequence Id. as a string and this functions returns it as an int.
+    
     """
     Segment_File(instrument, file0, 1)
     Segment_File(instrument, file1, 2)
@@ -209,7 +209,35 @@ def Sequence_Loader_File(instrument,LocationA,LocationB,loop,sleeptime):
     for i,j in zip(LocationA, LocationB):
         Sequence_File(instrument,LocationA[i],LocationB[j],loop)
         instrument.query('*OPC?')
-        
+        instrument.write('INIT:IMM')
+        sleep(sleeptime)
+        instrument.write('ABOR')
+
+    instrument.write('ABOR')
+   
+
+def Sequence_Loader_File_Dummy(instrument,LocationA,LocationB,loop,sleeptime,N,start):
+    
+    """ This function loads the csv data files from the Location dictionaries into the instrument as a sequence.
+
+    LocationA is a dictionary, whose elements are the file paths to the csv files that are going to be loaded as SegmentA into the sequence.
+    LocationB is a dictionary, whose elemnts re the filepaths to the csv files that are going to be loaded as SegmentB into the sequence
+    It uses the Sequence_File function to load the csv files to the instrument.
+    "sleeptime" is the time that the function waits before loading the next sequence, it is in seconds.
+    Includes dummy run to avoid loading time
+    """
+   #dummy loading 
+    Sequence_File(instrument,'SegmentA_{a}_{b}.csv'.format(a =N,b=start),'SegmentB_{a}_{b}.csv'.format(a = N,b= start),1)
+    instrument.query('*OPC?')
+    instrument.write('INIT:IMM')
+    sleep(sleeptime)
+    instrument.write('ABOR')
+    print('Dummy Segment loading ended')
+
+
+    for i,j in zip(LocationA, LocationB):
+        Sequence_File(instrument,LocationA[i],LocationB[j],loop)
+        instrument.query('*OPC?')
         instrument.write('INIT:IMM')
         sleep(sleeptime)
         instrument.write('ABOR')
@@ -217,6 +245,7 @@ def Sequence_Loader_File(instrument,LocationA,LocationB,loop,sleeptime):
     instrument.write('ABOR')
    
   
+
 
 
 def Sequence_Loader_List(PulseList1,PulseList2,P,t,N,start,stop,instrument,AWG,loop,sleeptime):
@@ -240,4 +269,26 @@ def Sequence_Loader_List(PulseList1,PulseList2,P,t,N,start,stop,instrument,AWG,l
     return DF1,DF2,timm
 
 
+
+
+
+def Sequence_Loader_List_D(PulseList1,PulseList2,P,t,N,start,stop,instrument,AWG,loop,sleeptime):
+
+    """ Given two pulse schemes lists, this functions iterates over them from start to stop and loads the corresponding sequence to the instrument
+
+        This function firts creates the corresponding pulse sequence data given the PulseLists using the Sweep_iteration_csv function
+        it thens loads them sequentially into the instrument using the Sequence_Loader_File function.
+    """
+
+    #SegmentA of the sequence
+    Loc1,DF1,timm = Sweep_Iteration_CSV_List(PulseList1,P,t,N,start,stop,AWG,1)
+
+    #SegmentB of the Sequence
+    Loc2,DF2,timm = Sweep_Iteration_CSV_List(PulseList2,P,t,N,start,stop,AWG,0)
+
+
+    #Loading the sequence iteratively into the instrument
+    Sequence_Loader_File_Dummy(instrument,Loc1,Loc2,loop,sleeptime,N,start)
+
+    return DF1,DF2,timm
 
