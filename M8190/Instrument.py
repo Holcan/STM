@@ -216,7 +216,7 @@ def Sequence_Loader_File(instrument,LocationA,LocationB,loop,sleeptime):
     instrument.write('ABOR')
    
 
-def Sequence_Loader_File_Dummy(instrument,LocationA,LocationB,loop,sleeptime,N,start):
+def Sequence_Loader_File_Dummy(instrument,LocationA,LocationB,loop,sleeptime,N,start,AWG):
     
     """ This function loads the csv data files from the Location dictionaries into the instrument as a sequence.
 
@@ -226,8 +226,15 @@ def Sequence_Loader_File_Dummy(instrument,LocationA,LocationB,loop,sleeptime,N,s
     "sleeptime" is the time that the function waits before loading the next sequence, it is in seconds.
     Includes dummy run to avoid loading time
     """
-   #dummy loading 
-    Sequence_File(instrument,'SegmentA_{a}_{b}.csv'.format(a =N,b=start),'SegmentB_{a}_{b}.csv'.format(a = N,b= start),1)
+
+    #instrument.write('TRAC1:IQIM {segmentid}, "{a}", CSV, BOTH, ON, ALEN'.format(segmentid= id,a=r'{Fil}'.format(Fil=File)))
+
+    #strnng for the file location of the dummy sequence
+    strnga=r'{directory}\SegmentA_{a}_{b}.csv'.format(directory = AWG['Data Directory'], a=N, b= start)
+    strngb=r'{directory}\SegmentB_{a}_{b}.csv'.format(directory = AWG['Data Directory'], a=N, b= start)
+
+    #dummy loading 
+    Sequence_File(instrument,'{sega}'.format(sega=strnga),'{segb}'.format(segb=strngb),1)
     instrument.query('*OPC?')
     instrument.write('INIT:IMM')
     sleep(sleeptime)
@@ -288,7 +295,7 @@ def Sequence_Loader_List_D(PulseList1,PulseList2,P,t,N,start,stop,instrument,AWG
 
 
     #Loading the sequence iteratively into the instrument
-    Sequence_Loader_File_Dummy(instrument,Loc1,Loc2,loop,sleeptime,N,start)
+    Sequence_Loader_File_Dummy(instrument,Loc1,Loc2,loop,sleeptime,N,start,AWG)
 
     return DF1,DF2,timm
 
