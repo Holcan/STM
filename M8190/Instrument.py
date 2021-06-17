@@ -197,7 +197,7 @@ def Sequence_Pulse_List(PulseList1,PulseList2,P,p,t,N,instrument,AWG,loop):
 
 def Sequence_Loader_File(instrument,LocationA,LocationB,loop,sleeptime):
     
-    """ This function loads the csv data files from the Location dictionaries into the instrument as a sequence.
+    """ This function loads the csv data files from the Location dictionaries into the instrument as a sequence. FOR SWEEPING
 
     LocationA is a dictionary, whose elements are the file paths to the csv files that are going to be loaded as SegmentA into the sequence.
     LocationB is a dictionary, whose elemnts re the filepaths to the csv files that are going to be loaded as SegmentB into the sequence
