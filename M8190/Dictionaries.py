@@ -15,7 +15,7 @@ AWG_Settings1={
 
 AWG_Settings2={
     'Visa Resource Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
-    'Voltage Amplitude':300,
+    'Voltage Amplitude':700,
     'Clock Sample Frecuency':500000000,
     'Output_Channel': 1,
     'Mode': 'STS',
@@ -38,7 +38,7 @@ AWG_Settings3={
 
 Rabi={
     'Name':'Rabi',
-    'Amplitude':200,
+    'Amplitude':600,
     'Start time':0,
     'End time':2e-10,
     'Start Duration':1,
@@ -72,7 +72,7 @@ Rabi3={
 
 Probe1={
     'Name':'Probe1',
-    'Amplitude':100,
+    'Amplitude':510,
     'Start time':2,
     'End time':12,
     'Start Duration':3,
@@ -85,7 +85,7 @@ Probe1={
 
 Probe2={
     'Name':'Probe2',
-    'Amplitude':-100,
+    'Amplitude':-510,
     'Start time':2,
     'End time':12,
     'Start Duration':3,

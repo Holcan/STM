@@ -40,17 +40,17 @@ def Instrument_Settings(instrument):
 
 def Initialization(instrument,AWG):
 
-    """This function sets the initialization of the instrument.
+    """This function sets the initialization of the instrument, using the keys of the AWG dictionary.
 
-        Instruments output " DC Amp out" is activated and the voltage is set to the value given in the AWG dictionary.
-        The Sampling frecuency is set as well, given by the corresponding key.
+        Instruments output rout is given by the 'Output_route' key, voltage by 'Voltage Amplitude' and sampling frequency by 'Clock Sample Frecuency'.
+        This is a somewhat loose, since the output rout is given by the ditionary key, but the amplitude is "hard coded" for the DC output route.
     """
 
     instrument.write('INST:COUP:STAT 0') #Decoupling the channels
     instrument.query('*OPC?')
-    instrument.write('OUTP1:ROUT DC') #setting the output to DC 
+    instrument.write('OUTP1:ROUT {route}'.format( route = AWG['Output_rout'])) #setting the output route to the one given by the AWG dictionary, keysight technicians recomend DC or DAC, since AC has poor spectral performance 
     instrument.query('*OPC?')
-    instrument.write('OUTP1 ON') #activating the output "Amp Out"
+    instrument.write('OUTP1 ON') #activating the output "Amp Out".
     instrument.query('*OPC?')
     instrument.write('DC1:VOLT:AMPL {volt}'.format(volt = AWG['Voltage Amplitude']/1000)) #Setting Normilized Voltage amplitude
     instrument.query('*OPC?')
