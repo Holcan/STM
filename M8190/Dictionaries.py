@@ -8,7 +8,7 @@ AWG_Settings1={
     'Clock Sample Frecuency':125000000,
     'Output_Channel': 1,
     'Mode': 'STS',
-    'Output_rout': 'DC',
+    'Output Rout': 'DC',
     'Data Directory': r'D:\Alejandro\Pulses\Dict\S1'
 
 }
@@ -19,26 +19,37 @@ AWG_Settings2={
     'Clock Sample Frecuency':500000000,
     'Output_Channel': 1,
     'Mode': 'STS',
-    'Output_rout': 'DC',
+    'Output Rout': 'DC',
     'Data Directory': r'D:\Alejandro\Pulses\Dict\S2'
 
 }
 
 AWG_Settings3={
     'Visa Resource Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
+    'Voltage Amplitude':700,
+    'Clock Sample Frecuency':500000000,
+    'Output_Channel': 1,
+    'Mode': 'STS',
+    'Output Rout': 'DAC', #DAC output rout only has the BNC outputs: Direct Out and (Averaged) Direct Out
+    'Data Directory': r'D:\Alejandro\Pulses\Dict\S3'
+
+}
+
+AWG_Settings4={
+    'Visa Resource Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
     'Voltage Amplitude':300,
     'Clock Sample Frecuency':500000000,
     'Output_Channel': 1,
     'Mode': 'STS',
-    'Output_rout': 'DC',
-    'Data Directory': r'D:\Documentos\STM\Python Pulses\S3'
+    'Output Rout': 'DC',
+    'Data Directory': r'D:\Documentos\STM\Python Pulses\S4'
 
 }
 
 
 Rabi={
     'Name':'Rabi',
-    'Amplitude':600,
+    'Amplitude':400,
     'Start time':0,
     'End time':2e-10,
     'Start Duration':1,
@@ -72,7 +83,7 @@ Rabi3={
 
 Probe1={
     'Name':'Probe1',
-    'Amplitude':510,
+    'Amplitude':310,
     'Start time':2,
     'End time':12,
     'Start Duration':3,
@@ -85,7 +96,7 @@ Probe1={
 
 Probe2={
     'Name':'Probe2',
-    'Amplitude':-510,
+    'Amplitude':-310,
     'Start time':2,
     'End time':12,
     'Start Duration':3,
