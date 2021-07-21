@@ -7,6 +7,7 @@ from Dictionaries import *
 from PulseFiles import *
 import pyvisa as visa
 from datetime import date
+import nidaqmx
 
 #The functions within this module are used to interact with the instrument. From initializing settings to loading segments and sequences into it.
 
@@ -177,8 +178,7 @@ def Sequence_Pulse_List(PulseList1,PulseList2,P,p,t,N,instrument,AWG,loop):
 
     """This function takes pulse sequences lists as imput and with the given parameters loads them into the instrument.
 
-        This function combines the Sweep function with the Sequence_array function.
-    Sweep and Sweept work the same way but Sweept also returns the time inverval.
+    This function combines the Sweep function with the Sequence_array function.
     """
 
     #creating the numpy array from the PulseList1
@@ -300,3 +300,23 @@ def Sequence_Loader_List_D(PulseList1,PulseList2,P,t,N,start,stop,instrument,AWG
 
     return DF1,DF2,timm
 
+def Trigger_Pulse(instrument,channel,amp,duration):
+    """This function generates a constant voltage pulse, with amplitude amp, over the time duration with the DAQ Box.
+    
+    This uses the nidaqmx API for interacting with the NI DAQ box, after the time duraion ends, the voltage amplitude is set to 0
+    The name of the DAQ box (instrument) as well as the channel must be provided. Maximum amp value is 4
+    """
+    trig_task =  nidaqmx.Task()
+    trig_task.ao_channels.add_ao_voltage_chan('{a}/{b}'.format(a = instrument, b = channel),'triggering',-4,4)
+    trig_task.start()
+
+    trig_task.write(amp)
+    time.sleep(duration)
+    trig_task.stop()
+    
+    trig_task.start()
+    trig_task.write(0)
+    print('Done')
+
+    trig_task.stop()
+    trig_task.close()

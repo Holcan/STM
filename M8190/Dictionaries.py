@@ -37,7 +37,18 @@ AWG_Settings3={
 
 AWG_Settings4={
     'Visa Resource Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
-    'Voltage Amplitude':300,
+    'Voltage Amplitude':700,
+    'Clock Sample Frecuency':500000000,
+    'Output_Channel': 1,
+    'Mode': 'STS',
+    'Output Rout': 'DC',
+    'Data Directory': r'D:\Alejandro\Pulses\Dict\S4'
+
+}
+
+AWG_Settings4huh={
+    'Visa Resource Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
+    'Voltage Amplitude':700,
     'Clock Sample Frecuency':500000000,
     'Output_Channel': 1,
     'Mode': 'STS',
@@ -78,6 +89,41 @@ Rabi3={
     'Start Duration':7,
     'End Duration':6,
     'Sweep time':0,
+    'Sweep Duration':0
+}
+
+
+
+Rabis={
+    'Name':'Rabis',
+    'Amplitude':600,
+    'Start time':1e-10,
+    'End time':2e-10,
+    'Start Duration':7,
+    'End Duration':6,
+    'Sweep time':0,
+    'Sweep Duration':0
+}
+
+ProbesA={
+    'Name':'ProbesA',
+    'Amplitude':550,
+    'Start time':9,
+    'End time':12,
+    'Start Duration':4,
+    'End Duration':6,
+    'Sweep time':1,
+    'Sweep Duration':0
+}
+
+ProbesB={
+    'Name':'ProbesB',
+    'Amplitude':-550,
+    'Start time':9,
+    'End time':12,
+    'Start Duration':4,
+    'End Duration':6,
+    'Sweep time':1,
     'Sweep Duration':0
 }
 
@@ -133,7 +179,13 @@ Pulses_List = [
     Rabi,Probe1
     ]  ;
 
+PList_secondsA = [
+    Rabis, ProbesA
+]
 
+PList_secondsB = [
+    Rabis, ProbesB
+]
 
 Pulses_List2 = [
     Rabi,Probe2
