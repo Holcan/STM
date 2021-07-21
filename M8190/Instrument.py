@@ -66,7 +66,8 @@ def Segment_File(instrument,File,id):
     This functions loads the csv file "File" into the AWG as a Segment with the corresponding id.
 
     This function uses the TRAC Subsystem of the AWG, alongside with SCPI. The AWG may create a segment whose length is larger than the data size to
-    account for the granularity, but that does not alters any value within the sample data.
+    account for the granularity (it must be a multiple of 480), if the given data does not match the granularity, multiple segments will be displayed.
+    to fullfil this condition.
     """
 
     #precision mode for now, vector size in samples is multiple of 48
