@@ -8,6 +8,8 @@ from PulseFiles import *
 import pyvisa as visa
 from datetime import date
 import nidaqmx
+from nidaqmx.constants import Edge
+from nidaqmx.constants import AcquisitionType
 
 #The functions within this module are used to interact with the instrument. From initializing settings to loading segments and sequences into it.
 
@@ -57,9 +59,20 @@ def Initialization(instrument,AWG):
     instrument.query('*OPC?')
     instrument.write('FREQ:RAST {sr}'.format(sr = AWG['Clock Sample Frecuency']))  #Setting the sample rate
     instrument.query('*OPC?')
-    #print(instrument.query('FREQ:RAST?'))
+    instrument.write('ARM:TRIG:LEV {vol}'.format(vol = AWG['Trigger In Threshold'] ))
+    instrument.query('*OPC?')
+    instrument.write('ARM:TRIG:IMP HIGH')
+    instrument.query('*OPC?')
+    #Initializing the Sequence Function Mode
+    instrument.write('INIT:GATE1 0')
+    instrument.write('INIT:CONT1 0')
+    instrument.write('FUNC1:MODE {mode}'.format( mode = AWG['Mode']))
+    instrument.query('*OPC?')
+
+    
     print('Instruments Sampling Frecuency set to {a}Hz'.format(a = instrument.query('FREQ:RAST?')))
     print('Instruments {route}1 Output route Voltage set to {V}deciVolts'.format(route = AWG['Output Rout'] ,V = instrument.query('DC1:VOLT:AMPL?')))
+    print('Trigger in threshold value set to {a}V'.format(a = instrument.query('ARM:TRIG:LEV?')))
 
 def Segment_File(instrument,File,id):
 
@@ -75,6 +88,7 @@ def Segment_File(instrument,File,id):
     instrument.write('TRAC1:DWID WPR')
     instrument.query('*OPC?')
     instrument.write('TRAC1:IQIM {segmentid}, "{a}", CSV, BOTH, ON, ALEN'.format(segmentid= id,a=r'{Fil}'.format(Fil=File)))
+    #instrument.write('TRAC1:ADV COND')
     instrument.query('*OPC?')
 
 
@@ -106,10 +120,9 @@ def Def_Sequence(instrument,loop):
         that must be prevoiusly defined and loaded in th AWG (either by hand, or with the Segment functions
         in this module).
         The Sequence will have a length of 2, it is specifically designed for creating sequences with segments.
+        The table entries will set the advancement mode to Conditional.
     """
-    #Initializing the Sequence Function Mode
-    instrument.write('FUNC1:MODE STS')
-    instrument.query('*OPC?')
+
 
     #Defining new sequence, The SCPI query SEQ:DEF:NEW? returns the Sequence Id. as a string and this functions returns it as an int.
     seq_id = int(instrument.query('SEQ1:DEF:NEW? 2'))
@@ -127,6 +140,9 @@ def Def_Sequence(instrument,loop):
     instrument.write('SEQ1:DATA {seqid},1,2,{l},0,1,0,#hFFFFFFFF'.format(seqid = seq_id, l = loop))
     instrument.query('*OPC?')
     
+    instrument.write('SEQ:ADV 0, COND')
+    instrument.query('*OPC?')
+    print('Sequence advancement method is {met}'.format(met = instrument.query('SEQ:ADV? 0')))
     
     instrument.write('STAB1:SEQ:SEL {t}'.format(t = seq_id))
     instrument.query('*OPC?')
@@ -316,7 +332,140 @@ def Trigger_Pulse(instrument,channel,amp,duration):
     
     trig_task.start()
     trig_task.write(0)
-    print('Done')
+    print('Triggering Pulse Stoped')
 
     trig_task.stop()
     trig_task.close()
+
+
+def Trigger_Segment1(instrument,file_location,segid,DAQ,channel,voltage,playingtime):
+    """This function will load one segment to the AWG and set it up to triggered mode, then it will start it, trigger it and stop it. Whole duration of this will be
+        given by the sleep parameter.
+        
+        This function calls the Segment_File function and the Trigger_Pulse function.
+    """
+    #loading the segment to AWG
+    Segment_File(instrument,'{loc}'.format(loc = file_location),segid)
+
+    #Setting up the triggering settings
+    instrument.write('TRAC:SEL {id}'.format(id = segid))
+    instrument.write('TRAC:ADV COND')
+    instrument.write('INIT:GATE1 0')
+    instrument.write('INIT:CONT1 0')
+    instrument.write('ARM:TRIG:IMP HIGH')
+    instrument.write('ARM:TRIG:LEV {vol}'.format(vol = voltage - 0.5))
+    instrument.query('*OPC?')
+    instrument.write('INIT:IMM')
+
+    #Setting up the triggering voltage from the DAQ
+    time.sleep(10)
+    Trigger_Pulse('{daq}'.format(daq = DAQ),'{chn}'.format(chn = channel),voltage,11)
+
+    #setting AWG playing time
+    time.sleep(playingtime)
+    instrument.write('ABOR')
+
+def Sequence_Triggered(Pulse_ListA,Pulse_ListB,P,p,t,N,instrument,AWG,loop,DAQ,channel,voltage,playingtime):
+    """What the title says lol
+    """
+    #loading the segment to AWG
+    seqid, dataframepulses1, dataframepulses2, timee = Sequence_Pulse_List(Pulse_ListA,Pulse_ListB,P,p,t,N,instrument,AWG,loop)
+
+
+    #Setting up the triggering settings
+    
+    instrument.write('INIT:GATE1 0')
+    instrument.write('INIT:CONT1 0')
+    instrument.write('ARM:TRIG:IMP HIGH')
+    instrument.write('ARM:TRIG:LEV {vol}'.format(vol = voltage - 0.5))
+    instrument.query('*OPC?')
+    instrument.write('INIT:IMM')
+
+    #Setting up the triggering voltage from the DAQ
+    time.sleep(10)
+    print('Triggering Pulse Started')
+    Trigger_Pulse('{daq}'.format(daq = DAQ),'{chn}'.format(chn = channel),voltage,11)
+    print('Triggering Pulse Stopped')
+
+    #setting AWG playing time
+    time.sleep(playingtime)
+    print('Sequence Stopped')
+    instrument.write('ABOR')
+
+    return dataframepulses1, dataframepulses2, timee
+
+
+
+def Triggered_Sequence_Setup(Pulse_ListA,Pulse_ListB,P,p,t,N,instrument,AWG,loop):
+    """Given a pulse scheme, this function loads it into the AWG and enables it to recieve a trigger in order to play
+       the correspondent wave function.
+
+        The function first calls the Sequence_Pulse_List function to load the pulse scheme into the AWG, then it configures 
+        the corresponding AWG subsystem settings to set it up to trigger mode.
+
+        Voltage is the voltage parameter given in volts, the maximum values for safe operations are -10V and 10V.
+
+        The funciton returns the dataframes of the pulses in the sequence, and the time interval for them
+    """
+    #loading the segment to AWG
+    seqid, dataframepulses1, dataframepulses2, timee = Sequence_Pulse_List(Pulse_ListA,Pulse_ListB,P,p,t,N,instrument,AWG,loop)
+
+
+    #Setting up the triggering settings
+    
+    #instrument.write('INIT:GATE1 0')
+    #instrument.write('INIT:CONT1 0')
+    #instrument.query('*OPC?')
+    #instrument.write('INIT:IMM')
+    #instrument.query('*OPC?')
+    #print('AWG initiated')
+
+
+
+    return dataframepulses1, dataframepulses2, timee
+
+def DAQ_Measuring(DAQ_settings,playingtime,amp):
+    """This function starts sets up the DAQ box in order to collect data for a time duration given by "playing time"
+      It then uses the DAQ box to trigger the AWG into playing a waveform.
+
+      playingtime should be in seconds.
+    """
+    #Calculating the number of samples given the samplig frecuency and playying time
+    samples = DAQ_settings['Sampling Frequency'] * playingtime
+
+    #setting the measuring task
+    measuring_task = nidaqmx.Task()
+    
+    #voltage measuring channel
+    measuring_task.ai_channels.add_ai_voltage_chan("{a}/{b}".format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Input']),min_val=DAQ_settings['Minimum Voltage'],max_val= DAQ_settings['Maximum Voltage'])
+
+    #Sampling configuration
+    measuring_task.timing.cfg_samp_clk_timing(DAQ_settings['Sampling Frequency'], source="", active_edge=Edge.RISING, sample_mode=AcquisitionType.FINITE, samps_per_chan=samples)
+
+    measuring_task.start()
+
+    data = np.array(measuring_task.read(samples))
+
+    measuring_task.stop()
+    measuring_task.close()
+
+
+
+    #Triggering Task
+
+    trig_task =  nidaqmx.Task()
+    trig_task.ao_channels.add_ao_voltage_chan('{a}/{b}'.format(a = instrument, b = channel),'triggering',-4,4)
+    trig_task.start()
+
+    trig_task.write(amp)
+    time.sleep(5)
+    trig_task.stop()
+    
+    trig_task.start()
+    trig_task.write(0)
+    #print('Triggering Pulse Stoped')
+
+    trig_task.stop()
+    trig_task.close()
+
+    return data
