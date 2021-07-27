@@ -70,7 +70,7 @@ def Initialization(instrument,AWG):
 
     
     print('Instruments Sampling Frecuency set to {a}Hz'.format(a = instrument.query('FREQ:RAST?')))
-    print('Instruments {route}1 Output route Voltage set to {V}deciVolts'.format(route = AWG['Output Rout'] ,V = instrument.query('DC1:VOLT:AMPL?')))
+    print('Instruments Direct Out {route} Output route Voltage set to {V}deciVolts'.format(route = AWG['Output Rout'] ,V = instrument.query('DAC:VOLT:AMPL?'))) #hard coded which voltage amplitude is returned by the print, must put format within it to call on the value of the dictionary key
     print('AWG set to TRIGGERED Mode')
     print('Trigger In threshold value set to {a}V'.format(a = instrument.query('ARM:TRIG:LEV?')))
 
@@ -267,6 +267,23 @@ def Sequence_Loader_File_Dummy(instrument,LocationA,LocationB,loop,sleeptime,N,s
         instrument.write('ABOR')
 
     instrument.write('ABOR')
+
+
+def Sequence_Loader_List_Files(PulseList1,PulseList2,P,t,N,start,stop,AWG):
+
+    """ Given two pulse schemes lists, this functions iterates over them from start to stop.
+
+        This function firts creates the corresponding pulse sequence data given the PulseLists using the Sweep_iteration_csv function
+        
+    """
+
+    #SegmentA of the sequence
+    Loc1,DF1,timm = Sweep_Iteration_CSV_List(PulseList1,P,t,N,start,stop,AWG,1)
+
+    #SegmentB of the Sequence
+    Loc2,DF2,timm = Sweep_Iteration_CSV_List(PulseList2,P,t,N,start,stop,AWG,0)
+
+    return Loc1, Loc2, DF1,DF2,timm
    
   
 
@@ -366,7 +383,8 @@ def Trigger_Segment1(instrument,file_location,segid,DAQ,channel,voltage,playingt
     instrument.write('ABOR')
 
 def Sequence_Triggered(Pulse_ListA,Pulse_ListB,P,p,t,N,instrument,AWG,loop,DAQ,channel,voltage,playingtime):
-    """What the title says lol
+    """This functions has the set up parameters to put the AWG in Triggered mode, it then creates and loads the pulse schemes into the 
+        AWG, it then sets up the DAQ parameters to trigger the AWG for a given duration of time
     """
     #loading the segment to AWG
     seqid, dataframepulses1, dataframepulses2, timee = Sequence_Pulse_List(Pulse_ListA,Pulse_ListB,P,p,t,N,instrument,AWG,loop)
@@ -519,7 +537,7 @@ def DAQ_Measuring0ms(DAQ_settings,sr,playingtime,instrument):
     return data, measuring_time
 
 
-def DAQ_Measuring0(DAQ_settings,sr,playingtime,instrument):
+def DAQ_Measuring(DAQ_settings,sr,playingtime,instrument):
     """This function starts sets up the DAQ box in order to collect data for a time duration given by "playing time"
       It then uses the DAQ box to trigger the AWG into playing a waveform.
 

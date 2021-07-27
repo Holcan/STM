@@ -117,10 +117,10 @@ Rabi3 = {
 
 Rabis = {
     'Name':'Rabis',
-    'Amplitude':500,
+    'Amplitude':40,
     'Start time':1e-10,
     'End time':2e-10,
-    'Start Duration':7,
+    'Start Duration':2,
     'End Duration':6,
     'Sweep time':0,
     'Sweep Duration':0
@@ -128,8 +128,8 @@ Rabis = {
 
 ProbesA = {
     'Name':'ProbesA',
-    'Amplitude':200,
-    'Start time':10,
+    'Amplitude':20,
+    'Start time':2,
     'End time':12,
     'Start Duration':4,
     'End Duration':6,
@@ -139,8 +139,8 @@ ProbesA = {
 
 ProbesB = {
     'Name':'ProbesB',
-    'Amplitude':-200,
-    'Start time':10,
+    'Amplitude':-20,
+    'Start time':2,
     'End time':12,
     'Start Duration':4,
     'End Duration':6,
