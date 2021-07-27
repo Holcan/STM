@@ -10,7 +10,7 @@ AWG_Settings1 = {
     'Output_Channel': 1,
     'Mode': 'STS',
     'Trigger In Threshold' : 1,
-    'Output Rout': 'DC',
+    'Output Rout': 'DAC',
     'Data Directory': r'D:\Alejandro\Pulses\Dict\S1'
 }
 
@@ -21,7 +21,7 @@ AWG_Settings2 = {
     'Output_Channel': 1,
     'Mode': 'STS',
     'Trigger In Threshold' : 1,
-    'Output Rout': 'DC',
+    'Output Rout': 'DAC',
     'Data Directory': r'D:\Alejandro\Pulses\Dict\S2'
 }
 
@@ -43,7 +43,7 @@ AWG_Settings4 = {
     'Output_Channel': 1,
     'Mode': 'STS',
     'Trigger In Threshold' : 1,
-    'Output Rout': 'DC',
+    'Output Rout': 'DAC',
     'Data Directory': r'D:\Alejandro\Pulses\Dict\S4'
 }
 
@@ -53,7 +53,7 @@ AWG_Settings4huh = {
     'Clock Sample Frecuency':500000000,
     'Output_Channel': 1,
     'Mode': 'STS',
-    'Output Rout': 'DC',
+    'Output Rout': 'DAC',
     'Data Directory': r'D:\Documentos\STM\Python Pulses\S4'
 }
 

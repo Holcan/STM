@@ -48,10 +48,9 @@ def Initialization(instrument,AWG):
         Instruments output rout is given by the 'Output Route' key, voltage by 'Voltage Amplitude' and sampling frequency by 'Clock Sample Frecuency'.
         This is a somewhat loose, since the output rout is given by the ditionary key, but the amplitude is "hard coded" for the DC output route.
     """
-
     instrument.write('INST:COUP:STAT 0') #Decoupling the channels
     instrument.query('*OPC?')
-    instrument.write('OUTP1:ROUT {route}'.format( route = AWG['Output Rout'])) #setting the output route to the one given by the AWG dictionary, keysight technicians recomend DC or DAC, since AC has poor spectral performance 
+    instrument.write('OUTP:ROUT:SEL {route}'.format( route = AWG['Output Rout'])) #setting the output route to the one given by the AWG dictionary, keysight technicians recomend DC or DAC, since AC has poor spectral performance 
     instrument.query('*OPC?')
     instrument.write('OUTP1 ON') #activating the output rout.
     instrument.query('*OPC?')
@@ -500,7 +499,7 @@ def DAQ_Measuring0ms(DAQ_settings,sr,playingtime,instrument):
 
 
     
-    time.sleep(3)
+    #time.sleep(3)
     print('Triggering Pulse Stoped')
     trig_task.write(0)
 
@@ -529,7 +528,6 @@ def DAQ_Measuring0(DAQ_settings,sr,playingtime,instrument):
     """
     instrument.write('INIT:IMM')
     time.sleep(2)
-
 
 
     #Calculating the number of samples given the samplig frecuency and playing time
