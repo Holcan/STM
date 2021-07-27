@@ -67,6 +67,17 @@ DAQ_Settings1 = {
     'Data Directory': r'D:\Documentos\STM\Python Pulses\S1'
 }
 
+DAQ_Settings2 = {
+    'DAQ Name' : 'DAQBNC1',
+    'Analog Channel Input' : 'ai0',
+    'Analog Channel Output' : 'ao1',
+    'Minimum Voltage' : -4,
+    'Maximum Voltage' : 4,
+    'Sampling Frequency' : 1000,
+    'Data Directory': r'D:\Documentos\STM\Python Pulses\S1'
+}
+
+
 
 Rabi = {
     'Name':'Rabi',

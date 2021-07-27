@@ -141,7 +141,7 @@ def Def_Sequence(instrument,loop):
     instrument.write('SEQ1:DATA {seqid},1,2,{l},0,1,0,#hFFFFFFFF'.format(seqid = seq_id, l = loop))
     instrument.query('*OPC?')
     
-    instrument.write('SEQ:ADV 0, COND')
+    instrument.write('SEQ:ADV 0, COND') #advancement condition
     instrument.query('*OPC?')
     print('Sequence advancement method is {met}'.format(met = instrument.query('SEQ:ADV? 0')))
     
@@ -425,60 +425,6 @@ def Triggered_Sequence_Setup(Pulse_ListA,Pulse_ListB,P,p,t,N,instrument,AWG,loop
 
     return dataframepulses1, dataframepulses2, timee
 
-def DAQ_Measuring(DAQ_settings,playingtime,triggerinvoltage,instrument):
-    """This function starts sets up the DAQ box in order to collect data for a time duration given by "playing time"
-      It then uses the DAQ box to trigger the AWG into playing a waveform.
-
-      playingtime should be in seconds.
-      triggerinvoltage should be in volts.
-    """
-    #Calculating the number of samples given the samplig frecuency and playying time
-    samples = DAQ_settings['Sampling Frequency'] * playingtime * 1e-3
-    measuring_time = np.linspace(0,playingtime,int(samples))
-
-    #setting the measuring task
-    measuring_task = nidaqmx.Task()
-    
-    #voltage measuring channel
-    measuring_task.ai_channels.add_ai_voltage_chan("{a}/{b}".format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Input']),min_val=DAQ_settings['Minimum Voltage'],max_val= DAQ_settings['Maximum Voltage'])
-
-    #Sampling configuration
-    measuring_task.timing.cfg_samp_clk_timing(DAQ_settings['Sampling Frequency'], source="", active_edge=Edge.RISING, sample_mode=AcquisitionType.FINITE, samps_per_chan=int(samples))
-
-    measuring_task.start()
-
-    data = np.array(measuring_task.read(int(samples)))
-
-    Trigger_Pulse(DAQ_settings['DAQ Name'],DAQ_settings['Analog Channel Output'],triggerinvoltage,5)
-
-    measuring_task.stop()
-    measuring_task.close()
-
-
-
-    #Triggering Task
-
-    #trig_task =  nidaqmx.Task()
-    #trig_task.ao_channels.add_ao_voltage_chan('{a}/{b}'.format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Output']),'triggering',-4,4)
-    #trig_task.start()
-#
-    #trig_task.write(triggerinvoltage)
-    #time.sleep(5)
-    #trig_task.stop()
-    #
-    #trig_task.start()
-    #trig_task.write(0)
-    #print('Triggering Pulse Stoped')
-
-    #trig_task.stop()
-    #trig_task.close()
-
-    
-
-    instrument.write('ABOR')
-
-    return data, measuring_time
-
 
 
 
@@ -490,7 +436,7 @@ def DAQ_Measuringhalf(DAQ_settings,playingtime):
       
     """
     #Calculating the number of samples given the samplig frecuency and playying time
-    samples = DAQ_settings['Sampling Frequency'] * playingtime * 1e-3
+    samples = DAQ_settings['Sampling Frequency'] * playingtime 
     time = np.linspace(0,playingtime,int(samples))
 
     #setting the measuring task
@@ -510,4 +456,130 @@ def DAQ_Measuringhalf(DAQ_settings,playingtime):
     measuring_task.close()
 
     return data,time
+    
+
+def DAQ_Measuring0ms(DAQ_settings,sr,playingtime,instrument):
+    """This function starts sets up the DAQ box in order to collect data for a time duration given by "playing time"
+      It then uses the DAQ box to trigger the AWG into playing a waveform.
+
+      playingtime should be in seconds.
+      triggerinvoltage should be in volts.
+    """
+    instrument.write('INIT:IMM')
+    time.sleep(2)
+
+
+
+    #Calculating the number of samples given the samplig frecuency and playing time
+    samples = int(sr * playingtime*1e-3) 
+    measuring_time = np.linspace(0,playingtime,samples)
+
+    #setting the tasks
+    measuring_task = nidaqmx.Task()
+    trig_task =  nidaqmx.Task()
+   
+
+
+    #Channels Configuration
+    measuring_task.ai_channels.add_ai_voltage_chan("{a}/{b}".format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Input']),min_val=DAQ_settings['Minimum Voltage'],max_val= DAQ_settings['Maximum Voltage'])
+    trig_task.ao_channels.add_ao_voltage_chan('{a}/{b}'.format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Output']),'triggering',-4,4)
+
+    #Sampling configuration measuring channel
+    measuring_task.timing.cfg_samp_clk_timing(sr, active_edge=Edge.RISING, sample_mode=AcquisitionType.FINITE, samps_per_chan=samples)
+    #trig_task.timing.cfg_samp_clk_timing(DAQ_settings['Sampling Frequency'], samps_per_chan=samples)
+    #source = "measuring_task/SampleClock"
+
+    trig_task.start()
+    measuring_task.start()
+    
+
+    
+    trig_task.write(1.5)
+    #time.sleep(3)
+    data = np.array(measuring_task.read(samples))
+
+
+    
+    time.sleep(3)
+    print('Triggering Pulse Stoped')
+    trig_task.write(0)
+
+    
+    
+    
+
+    trig_task.stop()
+    measuring_task.stop()
+
+    measuring_task.close()
+    trig_task.close()
+
+
+    instrument.write('ABOR')
+
+    return data, measuring_time
+
+
+def DAQ_Measuring0(DAQ_settings,sr,playingtime,instrument):
+    """This function starts sets up the DAQ box in order to collect data for a time duration given by "playing time"
+      It then uses the DAQ box to trigger the AWG into playing a waveform.
+
+      playingtime should be in seconds.
+      triggerinvoltage should be in volts.
+    """
+    instrument.write('INIT:IMM')
+    time.sleep(2)
+
+
+
+    #Calculating the number of samples given the samplig frecuency and playing time
+    samples = int(sr * playingtime) 
+    measuring_time = np.linspace(0,playingtime,samples)
+
+    #setting the tasks
+    measuring_task = nidaqmx.Task()
+    trig_task =  nidaqmx.Task()
+   
+
+
+    #Channels Configuration
+    measuring_task.ai_channels.add_ai_voltage_chan("{a}/{b}".format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Input']),min_val=DAQ_settings['Minimum Voltage'],max_val= DAQ_settings['Maximum Voltage'])
+    trig_task.ao_channels.add_ao_voltage_chan('{a}/{b}'.format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Output']),'triggering',-4,4)
+
+    #Sampling configuration measuring channel
+    measuring_task.timing.cfg_samp_clk_timing(sr, active_edge=Edge.RISING, sample_mode=AcquisitionType.FINITE, samps_per_chan=samples)
+    #trig_task.timing.cfg_samp_clk_timing(DAQ_settings['Sampling Frequency'], samps_per_chan=samples)
+    #source = "measuring_task/SampleClock"
+
+    trig_task.start()
+    measuring_task.start()
+    
+
+    
+    trig_task.write(1.5)
+    #time.sleep(3)
+    data = np.array(measuring_task.read(samples))
+
+
+    
+    #time.sleep(3)
+    print('Triggering Pulse Stoped')
+    trig_task.write(0)
+
+    
+    
+    
+
+    trig_task.stop()
+    measuring_task.stop()
+
+    measuring_task.close()
+    trig_task.close()
+
+
+    instrument.write('ABOR')
+
+    return data, measuring_time
+
+
 
