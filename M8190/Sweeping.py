@@ -76,7 +76,7 @@ def Sweep(PulList,P,p,t,N):
 
 def Sweep_Iteration(PulList,P,t,N,start,stop):
 
-    """ This function iterates the Sweep function over the interval [start,stop] for a given pulse list PulList
+    """ This function iterates the Sweep function over the smaller interval [start,stop] for a given pulse list PulList
 
         This function creates an array, whose entries are the corresponding pulse sequences
         at different sweeping steps p, starting at the sweeping step p =start and ending at sweeping step p=stop.
