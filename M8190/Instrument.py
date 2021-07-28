@@ -66,11 +66,12 @@ def Initialization(instrument,AWG):
     instrument.write('INIT:GATE1 0')
     instrument.write('INIT:CONT1 0')
     instrument.write('FUNC1:MODE {mode}'.format( mode = AWG['Mode']))
+    instrument.write(':DAC1:VOLT:OFFS 0.00{value}'.format(value = 3 ))
     instrument.query('*OPC?')
 
     
     print('Instruments Sampling Frecuency set to {a}Hz'.format(a = instrument.query('FREQ:RAST?')))
-    print('Instruments Direct Out {route} Output route Voltage set to {V}deciVolts'.format(route = AWG['Output Rout'] ,V = instrument.query('DAC:VOLT:AMPL?'))) #hard coded which voltage amplitude is returned by the print, must put format within it to call on the value of the dictionary key
+    print('Instruments Direct Out {route} Output route Voltage set to {V}Volts'.format(route = AWG['Output Rout'] ,V = instrument.query('DAC:VOLT:AMPL?'))) #hard coded which voltage amplitude is returned by the print, must put format within it to call on the value of the dictionary key
     print('AWG set to TRIGGERED Mode')
     print('Trigger In threshold value set to {a}V'.format(a = instrument.query('ARM:TRIG:LEV?')))
 
@@ -142,12 +143,12 @@ def Def_Sequence(instrument,loop):
     
     instrument.write('SEQ:ADV 0, COND') #advancement condition
     instrument.query('*OPC?')
-    print('Sequence advancement method is {met}'.format(met = instrument.query('SEQ:ADV? 0')))
+    #print('Sequence advancement method is {met}'.format(met = instrument.query('SEQ:ADV? 0')))
     
     instrument.write('STAB1:SEQ:SEL {t}'.format(t = seq_id))
     instrument.query('*OPC?')
 
-    print('Sequence loaded with the following segment data "{b}"'.format(b = instrument.query('SEQ1:DATA? {c},0,2'.format(c=seq_id))))
+    print('Sequence loaded with the following segment data "{b}"'.format(b = instrument.query('SEQ1:DATA? {c},0,2'.format(c=seq_id))),'and the advancement method is {met}'.format(met = instrument.query('SEQ:ADV? 0')))
 
     return seq_id
 
@@ -268,10 +269,10 @@ def Sequence_Loader_File_Dummy(instrument,LocationA,LocationB,loop,sleeptime,N,s
 
     instrument.write('ABOR')
 
+  
+def Sequence_File_List(PulseList1,PulseList2,P,t,N,start,stop,AWG):
 
-def Sequence_Loader_List_Files(PulseList1,PulseList2,P,t,N,start,stop,AWG):
-
-    """ Given two pulse schemes lists, this functions iterates over them from start to stop.
+    """ Given two pulse schemes lists, this functions iterates the pulse scheme from start to stop.
 
         This function firts creates the corresponding pulse sequence data given the PulseLists using the Sweep_iteration_csv function
         
@@ -284,9 +285,6 @@ def Sequence_Loader_List_Files(PulseList1,PulseList2,P,t,N,start,stop,AWG):
     Loc2,DF2,timm = Sweep_Iteration_CSV_List(PulseList2,P,t,N,start,stop,AWG,0)
 
     return Loc1, Loc2, DF1,DF2,timm
-   
-  
-
 
 
 def Sequence_Loader_List(PulseList1,PulseList2,P,t,N,start,stop,instrument,AWG,loop,sleeptime):
@@ -349,7 +347,7 @@ def Trigger_Pulse(daq,channel,amp,duration):
     
     trig_task.start()
     trig_task.write(0)
-    print('Triggering Pulse Stoped')
+    print('Triggering Pulse Stopped')
 
     trig_task.stop()
     trig_task.close()
@@ -475,7 +473,7 @@ def DAQ_Measuringhalf(DAQ_settings,playingtime):
     return data,time
     
 
-def DAQ_Measuring0ms(DAQ_settings,sr,playingtime,instrument):
+def DAQ_Measuringms(DAQ_settings,sr,playingtime,instrument):
     """This function starts sets up the DAQ box in order to collect data for a time duration given by "playing time"
       It then uses the DAQ box to trigger the AWG into playing a waveform.
 
@@ -483,7 +481,7 @@ def DAQ_Measuring0ms(DAQ_settings,sr,playingtime,instrument):
       triggerinvoltage should be in volts.
     """
     instrument.write('INIT:IMM')
-    time.sleep(2)
+    time.sleep(5)
 
 
 
@@ -545,7 +543,7 @@ def DAQ_Measuring(DAQ_settings,sr,playingtime,instrument):
       triggerinvoltage should be in volts.
     """
     instrument.write('INIT:IMM')
-    time.sleep(2)
+    time.sleep(5)
 
 
     #Calculating the number of samples given the samplig frecuency and playing time
@@ -598,4 +596,49 @@ def DAQ_Measuring(DAQ_settings,sr,playingtime,instrument):
     return data, measuring_time
 
 
+def Sequence_Loader_File_DAQ_dictionary(instrument,DAQ_settings,sampling_rate,playingtime,fileA,fileB):
+    
+    """ This function loads the csv data files from the Location dictionaries into the instrument as a sequence and measures them withthe daq, for ms segime output is dictionary
 
+    LocationA is a dictionary, whose elements are the file paths to the csv files that are going to be loaded as SegmentA into the sequence.
+    LocationB is a dictionary, whose elemnts re the filepaths to the csv files that are going to be loaded as SegmentB into the sequence
+    It uses the Sequence_File function to load the csv files to the instrument.
+ 
+    """
+    #measurement_data = np.zeros(2,len(fileA))
+    measurement_data = {}
+
+
+
+    for i,j in zip(fileA, fileB):
+        Sequence_File(instrument,fileA[i],fileB[j],1)
+        measurement_data['Data for step {a}'.format(a =i)], measurement_data['Time interval step {a}'.format(a =i)] = DAQ_Measuringms(DAQ_settings,sampling_rate,playingtime,instrument)
+        #measurement_data['Time interval step {a}'.format(a =i)] = DAQ_Measuringms(DAQ_settings,sampling_rate,playingtime,instrument)[1]
+        #instrument.write('INIT:IMM')
+        #time.sleep(2)
+        #instrument.query('*OPC?')
+        #measurement_data['data result for step {a}and{b}'.format(a =i, b = j)] = DAQ_Measuringmsl(DAQ_settings,sampling_rate,playingtime,instrument)
+        instrument.write('ABOR')
+
+    return measurement_data
+
+def Sequence_Loader_File_DAQms_np(instrument,DAQ_settings,sampling_rate,playingtime,fileA,fileB):
+    
+    """ This function loads the csv data files from the Location dictionaries into the instrument as a sequence and measures them withthe daq, for ms segime output is numpy array
+
+    LocationA is a dictionary, whose elements are the file paths to the csv files that are going to be loaded as SegmentA into the sequence.
+    LocationB is a dictionary, whose elemnts re the filepaths to the csv files that are going to be loaded as SegmentB into the sequence
+    It uses the Sequence_File function to load the csv files to the instrument.
+ 
+    """
+    measurement_data = np.zeros((len(fileA),2),  dtype=object)
+    #measurement_data = {}
+
+    for i,j,k in zip(fileA, fileB,range(0,len(fileA))):
+        Sequence_File(instrument,fileA[i],fileB[j],1)
+        measurement_data[k][0], measurement_data[k][1] = DAQ_Measuringms(DAQ_settings,sampling_rate,playingtime,instrument)
+        print('Data acquired for Step {step}'.format(step = k ))
+        #instrument.write('ABOR')
+
+    return measurement_data
+    
