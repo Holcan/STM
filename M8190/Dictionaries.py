@@ -59,17 +59,21 @@ AWG_Settings4huh = {
 
 DAQ_Settings1 = {
     'DAQ Name' : 'DAQBNC1',
-    'Analog Channel Input' : 'ai0',
+    'Analog Channel Input Marker' : 'ai0',
+    'Analog Channel Input Waveform' : 'ai1',
     'Analog Channel Output' : 'ao1',
     'Minimum Voltage' : -4,
     'Maximum Voltage' : 4,
+    'Minimum Voltage Marker' : -5,
+    'Maximum Voltage Marker' : 5,
     'Sampling Frequency' : 400000,
     'Data Directory': r'D:\Documentos\STM\Python Pulses\S1'
 }
 
 DAQ_Settings2 = {
     'DAQ Name' : 'DAQBNC1',
-    'Analog Channel Input' : 'ai0',
+    'Analog Channel Input Marker' : 'ai0',
+    'Analog Channel Input Waveform' : 'ai1',
     'Analog Channel Output' : 'ao1',
     'Minimum Voltage' : -4,
     'Maximum Voltage' : 4,
