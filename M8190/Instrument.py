@@ -62,6 +62,10 @@ def Initialization(instrument,AWG):
     instrument.query('*OPC?')
     instrument.write('ARM:TRIG:IMP HIGH')
     instrument.query('*OPC?')
+    instrument.write('SOUR:MARK1:SYNC:VOLT:AMPL 0.05')
+    instrument.write('SOUR:MARK1:SYNC:VOLT:OFFS 0.02')
+    instrument.write(':SOUR:MARK1:SAMP:VOLT:AMPL 0.05')
+    instrument.write(':SOUR:MARK1:SAMP:VOLT:OFFS 0.02')
     #Initializing the Sequence Function Mode
     instrument.write('INIT:GATE1 0')
     instrument.write('INIT:CONT1 0')
@@ -141,7 +145,7 @@ def Def_Sequence(instrument,loop):
     instrument.write('SEQ1:DATA {seqid},1,2,{l},0,1,0,#hFFFFFFFF'.format(seqid = seq_id, l = loop))
     instrument.query('*OPC?')
     
-    instrument.write('SEQ:ADV 0, COND') #advancement condition
+    instrument.write('SEQ:ADV {seqid}, COND'.format(seqid = seq_id)) #advancement condition
     instrument.query('*OPC?')
     #print('Sequence advancement method is {met}'.format(met = instrument.query('SEQ:ADV? 0')))
     
@@ -689,3 +693,135 @@ def Sequence_Loader_File_DAQ_np(instrument,DAQ_settings,sampling_rate,playingtim
         #instrument.write('ABOR')
 
     return measurement_data
+
+def DAQ_Measuring_Markers(DAQ_settings,sr,playingtime,instrument):
+
+    """This function starts sets up the DAQ box in order to collect data for a time duration given by "playing time"
+      It then uses the DAQ box to trigger the AWG into playing a waveform.
+
+      playingtime should be in seconds.
+      triggerinvoltage should be in volts.
+    """
+    #Calculating the number of samples given the samplig frecuency and playing time
+    samples = int(sr * playingtime) 
+    measuring_time = np.linspace(0,playingtime,samples)
+
+    instrument.write('INIT:IMM')
+    time.sleep(5)
+
+    #setting the tasks
+    measuring_task = nidaqmx.Task()
+    trig_task =  nidaqmx.Task()
+    #current_tast = nidaqmx.Task()
+
+    #current_tast.ai_channels.add_ai_current_chan("{a}/{b}".format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Input Waveform']),min_val=DAQ_settings['Minimum Current'],max_val=DAQ_settings['Maximum Current'], units=CurrentUnits.AMPS)
+
+
+    #Channels Configuration
+    measuring_task.ai_channels.add_ai_voltage_chan("{a}/{b}".format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Input Waveform']),min_val=DAQ_settings['Minimum Voltage'],max_val= DAQ_settings['Maximum Voltage'])
+    measuring_task.ai_channels.add_ai_voltage_chan("{a}/{b}".format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Input Marker']),min_val=DAQ_settings['Minimum Voltage Marker'],max_val= DAQ_settings['Maximum Voltage Marker'])
+    trig_task.ao_channels.add_ao_voltage_chan('{a}/{b}'.format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Output']),'triggering',-4,4)
+
+    #Sampling configuration measuring channel
+    measuring_task.timing.cfg_samp_clk_timing(sr, samps_per_chan=samples)
+    #trig_task.timing.cfg_samp_clk_timing(DAQ_settings['Sampling Frequency'], samps_per_chan=samples)
+    #source = "measuring_task/SampleClock"
+
+    trig_task.start()
+    measuring_task.start()
+    
+
+    
+    trig_task.write(1.5)
+    #time.sleep(3)
+    data = np.array(measuring_task.read(samples))
+
+
+    
+    #time.sleep(3)
+    print('Triggering Pulse Stoped')
+    trig_task.write(0)
+
+    
+    
+    
+
+    trig_task.stop()
+    measuring_task.stop()
+
+    measuring_task.close()
+    trig_task.close()
+
+
+    instrument.write('ABOR')
+
+    return data, measuring_time
+
+
+
+
+def DAQ_Measuring_Markersms(DAQ_settings,sr,playingtime,instrument):
+    """This function starts sets up the DAQ box in order to collect data for a time duration given by "playing time"
+      It then uses the DAQ box to trigger the AWG into playing a waveform.
+
+      This DAQ maximum sampling rate of 400 KS/s for a single channel.  If you have more than 1 channel this max rate will decrease.
+      For example for 5 channels you will have a max sampling rate of 50 kS/s.
+
+
+      playingtime should be in seconds. it will be converted to mili seconds
+      triggerinvoltage should be in volts.
+    """
+    #Calculating the number of samples given the samplig frecuency and playing time
+    samples = int(sr * playingtime*1e-3) 
+    measuring_time = np.linspace(0,playingtime,samples)
+
+    instrument.write('INIT:IMM')
+    time.sleep(5)
+
+    #setting the tasks
+    measuring_task = nidaqmx.Task()
+    trig_task =  nidaqmx.Task()
+    #current_tast = nidaqmx.Task()
+
+    #current_tast.ai_channels.add_ai_current_chan("{a}/{b}".format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Input Waveform']),min_val=DAQ_settings['Minimum Current'],max_val=DAQ_settings['Maximum Current'], units=CurrentUnits.AMPS)
+
+
+    #Channels Configuration
+    measuring_task.ai_channels.add_ai_voltage_chan("{a}/{b}".format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Input Waveform']),min_val=DAQ_settings['Minimum Voltage'],max_val= DAQ_settings['Maximum Voltage'])
+    measuring_task.ai_channels.add_ai_voltage_chan("{a}/{b}".format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Input Marker']),min_val=DAQ_settings['Minimum Voltage Marker'],max_val= DAQ_settings['Maximum Voltage Marker'])
+    trig_task.ao_channels.add_ao_voltage_chan('{a}/{b}'.format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Output']),'triggering',-4,4)
+
+    #Sampling configuration measuring channel
+    measuring_task.timing.cfg_samp_clk_timing(sr, samps_per_chan=samples)
+    #trig_task.timing.cfg_samp_clk_timing(DAQ_settings['Sampling Frequency'], samps_per_chan=samples)
+    #source = "measuring_task/SampleClock"
+
+    trig_task.start()
+    measuring_task.start()
+    
+
+    
+    trig_task.write(1.5)
+    #time.sleep(3)
+    data = np.array(measuring_task.read(samples))
+
+
+    
+    #time.sleep(3)
+    print('Triggering Pulse Stoped')
+    trig_task.write(0)
+
+    
+    
+    
+
+    trig_task.stop()
+    measuring_task.stop()
+
+    measuring_task.close()
+    trig_task.close()
+
+
+    instrument.write('ABOR')
+
+    return data, measuring_time
