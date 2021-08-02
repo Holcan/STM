@@ -147,7 +147,7 @@ def Sweept(PulList,P,p,t,N):
     return pulscheme, time
 
 
-    def sweepslice(Pulse,P,p,t,N):
+def sweepslice(Pulse,P,p,t,N):
     
         """Sweeping function for a single pulse with respect of time and duration.
 
