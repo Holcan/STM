@@ -123,6 +123,38 @@ Rabi3 = {
     'Sweep Duration':0
 }
 
+PumpN =  {
+    'Name':'PumpN',
+    'Amplitude':120,
+    'Start time':1e-10,
+    'End time':2e-10,
+    'Start Duration':30,
+    'End Duration':6,
+    'Sweep time':0,
+    'Sweep Duration':0
+}
+
+ProbeNA = {
+    'Name':'ProbeNA',
+    'Amplitude':40,
+    'Start time':50,
+    'End time':90,
+    'Start Duration':20,
+    'End Duration':6,
+    'Sweep time':1,
+    'Sweep Duration':0
+}
+
+ProbeNB = {
+    'Name':'ProbeNB',
+    'Amplitude':-40,
+    'Start time':50,
+    'End time':90,
+    'Start Duration':20,
+    'End Duration':6,
+    'Sweep time':1,
+    'Sweep Duration':0
+}
 
 
 Rabis = {
@@ -229,3 +261,11 @@ PScheme=[
 PScheme2=[
     Rabi2, PulsoH
     ]
+
+Nano_ListA = [
+    PumpN, ProbeNA
+]
+
+Nano_ListB = [
+    PumpN, ProbeNB
+]
