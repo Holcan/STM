@@ -63,9 +63,9 @@ def Initialization(instrument,AWG_Settings_Dict):
     instrument.write('ARM:TRIG:IMP HIGH') #triggering channel impedance
     instrument.query('*OPC?')
     instrument.write('SOUR:MARK1:SYNC:VOLT:AMPL 0.05') #Voltage Amplitude for the Sync Mrk Out 1 channel, it has a weird behavior
-    instrument.write('SOUR:MARK1:SYNC:VOLT:OFFS 0.02') #Voltage Offset for theSync Mrk Out 1 channel, it has a weird behavior
+    instrument.write('SOUR:MARK1:SYNC:VOLT:OFFS 0.03') #Voltage Offset for theSync Mrk Out 1 channel, it has a weird behavior
     instrument.write(':SOUR:MARK1:SAMP:VOLT:AMPL 0.05') #Voltage Amplitude for the Sample Marker 1 channel, it was a weir behaviour
-    instrument.write(':SOUR:MARK1:SAMP:VOLT:OFFS 0.02') #Voltage Offset for the Sample Marker 1 channel, it was a weir behaviour
+    instrument.write(':SOUR:MARK1:SAMP:VOLT:OFFS 0.03') #Voltage Offset for the Sample Marker 1 channel, it was a weir behaviour
     
     #Initializing the Sequence Function Mode
     instrument.write('INIT:GATE1 0')
