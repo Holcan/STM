@@ -198,7 +198,7 @@ def Sequence_Array(instrument,pulse_array0,pulse_array1,AWG_Settings_Dict,step,l
 
 def Sequence_Pulse_List(PulseList1,PulseList2,P,p,t,N,instrument,AWG_Settings_Dict,loop):
 
-    """This function takes pulse sequences lists as imput and with the given parameters loads them into the instrument.
+    """This function takes pulse sequences lists as imput and with the given parameters loads them into the instrument at sweeping step p.
 
     This function combines the Sweep function with the Sequence_array function.
     """
