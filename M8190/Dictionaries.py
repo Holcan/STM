@@ -57,6 +57,17 @@ AWG_Settings4huh = {
     'Data Directory': r'D:\Documentos\STM\Python Pulses\S4'
 }
 
+AWG_Settings5 = {
+    'Visa Resource Name': 'TCPIP0::ibn3-036.ibn-net.kfa-juelich.de::hislip0::INSTR',
+    'Voltage Amplitude':700,
+    'Clock Sample Frecuency':6000000000,
+    'Output_Channel': 1,
+    'Mode': 'STS',
+    'Trigger In Threshold' : 1,
+    'Output Rout': 'DAC', #DAC output rout only has the BNC outputs: Direct Out and (Averaged) Direct Out
+    'Data Directory': r'D:\Alejandro\Pulses\Dict\S5'
+}
+
 DAQ_Settings1 = {
     'DAQ Name' : 'DAQBNC1',
     'Analog Channel Input Marker' : 'ai2',
@@ -69,7 +80,7 @@ DAQ_Settings1 = {
     'Maximum Current': 0.01,
     'Minimum Current' : -0.01,
     'Sampling Frequency' : 400000,
-    'Data Directory': r'D:\Documentos\STM\Python Pulses\S1'
+    'Data Directory': r'D:\Documentos\STM\Python Pulses\S1' #path of home computer file!
 }
 
 DAQ_Settings2 = {

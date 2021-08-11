@@ -62,10 +62,10 @@ def Initialization(instrument,AWG_Settings_Dict):
     instrument.query('*OPC?')
     instrument.write('ARM:TRIG:IMP HIGH') #triggering channel impedance
     instrument.query('*OPC?')
-    instrument.write('SOUR:MARK1:SYNC:VOLT:AMPL 0.05') #Voltage Amplitude for the Sync Mrk Out 1 channel, it has a weird behavior
-    instrument.write('SOUR:MARK1:SYNC:VOLT:OFFS 0.03') #Voltage Offset for theSync Mrk Out 1 channel, it has a weird behavior
-    instrument.write(':SOUR:MARK1:SAMP:VOLT:AMPL 0.05') #Voltage Amplitude for the Sample Marker 1 channel, it was a weir behaviour
-    instrument.write(':SOUR:MARK1:SAMP:VOLT:OFFS 0.03') #Voltage Offset for the Sample Marker 1 channel, it was a weir behaviour
+    instrument.write('SOUR:MARK1:SYNC:VOLT:AMPL 0.17') #Voltage Amplitude for the Sync Mrk Out 1 channel, it has a weird behavior, gives 2.04 V of amplitude
+    instrument.write('SOUR:MARK1:SYNC:VOLT:OFFS 0.01') #Voltage Offset for theSync Mrk Out 1 channel, it has a weird behavior
+    instrument.write(':SOUR:MARK1:SAMP:VOLT:AMPL 0.17') #Voltage Amplitude for the Sample Marker 1 channel, it was a weir behaviour
+    instrument.write(':SOUR:MARK1:SAMP:VOLT:OFFS 0.01') #Voltage Offset for the Sample Marker 1 channel, it was a weir behaviour
     
     #Initializing the Sequence Function Mode
     instrument.write('INIT:GATE1 0')
@@ -470,7 +470,7 @@ def DAQ_Measuringhalf(DAQ_settings,playingtime):
 
     measuring_task.start()
 
-    data = np.array(measuring_task.read(int(samples)))
+    data = np.array(measuring_task.read(int(samples,timeout=50.0)))
 
     measuring_task.stop()
     measuring_task.close()
@@ -516,7 +516,7 @@ def DAQ_Measuringms(DAQ_settings,sr,playingtime,instrument):
     
     trig_task.write(1.5)
     #time.sleep(3)
-    data = np.array(measuring_task.read(samples))
+    data = np.array(measuring_task.read(samples,timeout=50.0))
 
 
     
@@ -566,7 +566,7 @@ def DAQ_Measuring(DAQ_settings,sr,playingtime,instrument):
     trig_task.ao_channels.add_ao_voltage_chan('{a}/{b}'.format(a = DAQ_settings['DAQ Name'], b = DAQ_settings['Analog Channel Output']),'triggering',-4,4)
 
     #Sampling configuration measuring channel
-    measuring_task.timing.cfg_samp_clk_timing(sr, active_edge=Edge.RISING, sample_mode=AcquisitionType.FINITE, samps_per_chan=samples)
+    measuring_task.timing.cfg_samp_clk_timing(sr, samps_per_chan=samples)
     #trig_task.timing.cfg_samp_clk_timing(DAQ_settings['Sampling Frequency'], samps_per_chan=samples)
     #source = "measuring_task/SampleClock"
 
@@ -577,7 +577,7 @@ def DAQ_Measuring(DAQ_settings,sr,playingtime,instrument):
     
     trig_task.write(1.5)
     #time.sleep(3)
-    data = np.array(measuring_task.read(samples))
+    data = np.array(measuring_task.read(samples,timeout=50.0))
 
 
     
@@ -735,7 +735,7 @@ def DAQ_Measuring_Markers(DAQ_settings,sr,playingtime,instrument):
     
     trig_task.write(1.5)
     #time.sleep(3)
-    data = np.array(measuring_task.read(samples))
+    data = np.array(measuring_task.read(samples,timeout=50.0))
 
 
     
@@ -804,7 +804,7 @@ def DAQ_Measuring_Markersms(DAQ_settings,sr,playingtime,instrument):
     
     trig_task.write(1.5)
     #time.sleep(3)
-    data = np.array(measuring_task.read(samples))
+    data = np.array(measuring_task.read(samples,timeout=50.0))
 
 
     
