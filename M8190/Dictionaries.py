@@ -247,36 +247,51 @@ PulsoH = {
     'Sweep Duration':0
 }
 
-#Pulse Sequences = Lists of Dictionaries
+#Pulse Sequences = Lists of Pulse Dictionaries, contained in dictionaries
+Pulses_List =  {
+    'Name' : 'Pulses_List',
+    'Pulse Scheme': [Rabi,Probe1],
+    'Number of repetitions': 1,
+}
 
-Pulses_List = [
-    Rabi,Probe1
-    ]  ;
+Pulses_List2 =  {
+    'Name' : 'Pulses_List2',
+    'Pulse Scheme': [Rabi,Probe2],
+    'Number of repetitions': 1,
+}
 
-PList_secondsA = [
-    Rabis, ProbesA
-]
+PList_secondsA =  {
+    'Name' : 'PList_secondsA',
+    'Pulse Scheme': [Rabis, ProbesA],
+    'Number of repetitions': 1,
+}
 
-PList_secondsB = [
-    Rabis, ProbesB
-]
+PList_secondsB =  {
+    'Name' : 'PList_secondsB',
+    'Pulse Scheme': [Rabis, ProbesB],
+    'Number of repetitions': 1,
+}
 
-Pulses_List2 = [
-    Rabi,Probe2
-    ];
+PScheme =  {
+    'Name' : 'PScheme',
+    'Pulse Scheme': [Rabi, PulsoG],
+    'Number of repetitions': 1,
+}
 
-PScheme=[
-    Rabi, PulsoG
-    ];
+PScheme2 =  {
+    'Name' : 'PScheme2',
+    'Pulse Scheme': [Rabi, PulsoH],
+    'Number of repetitions': 1,
+}
 
-PScheme2=[
-    Rabi2, PulsoH
-    ]
+Nano_ListA =  {
+    'Name' : 'Nano_ListA',
+    'Pulse Scheme': [PumpN, ProbeNA],
+    'Number of repetitions': 1,
+}
 
-Nano_ListA = [
-    PumpN, ProbeNA
-]
-
-Nano_ListB = [
-    PumpN, ProbeNB
-]
+Nano_ListB =  {
+    'Name' : 'Nano_ListB',
+    'Pulse Scheme': [PumpN, ProbeNB],
+    'Number of repetitions': 1,
+}

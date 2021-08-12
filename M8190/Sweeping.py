@@ -50,7 +50,8 @@ def sweep0(Pulse,P,p,t,N):
     
     else:
         print('p must be in the interval',[0,P])
-        
+
+
 def Sweep(PulList,P,p,t,N):
     
     """Function that perfoms or not a Sweep, depending on the Sweep dictionary keys, for the Pulse Scheme PulList.
@@ -71,6 +72,59 @@ def Sweep(PulList,P,p,t,N):
     #the final pulse scheme will be the overlap of each individual pulse, given by the sum of their arrays    
     pulscheme = np.sum(pularray,0)
     
+        
+    return pulscheme, time
+        
+def Sweep_dir(PulList,P,p,t,N):
+    
+    """Function that perfoms or not a Sweep, depending on the Sweep dictionary keys, for the Pulse Scheme PulList.
+    
+    This function is a generalization of the sweep0(Pulse,P,p,t).
+    It calls it and maps it over every Pulse in the list of pulses PulList.
+    If two pulses overlap, their amplitude is added up.
+    P gives the number of sample points for the overal pulse scheme, not to be confused with dt, the sweeping time step given by P
+    The pulse sequence is generated in the order that the pulses have within the PulseList.
+    """
+    
+    #time interval
+    time = np.linspace(0,t,N)
+    
+    #Each pulse will be an array, and an entry of a bigger array (we have an array of arrays)
+    pularray=np.array([sweep0(Pulse,P,p,t,N) for Pulse in PulList['Pulse Scheme']])
+        
+    #the final pulse scheme will be the overlap of each individual pulse, given by the sum of their arrays    
+    pulscheme0 = np.sum(pularray,0)
+    
+    #we divide the pulse scheme in order to play it several times
+    teil = int(pulscheme0.size/PulList['Number of repetitions'])
+    pulscheme = np.tile(pulscheme0[:teil],PulList['Number of repetitions'])
+        
+    return pulscheme, time
+
+
+def Sweepteil0(PulList,P,p,t,N):
+    
+    """Function that perfoms or not a Sweep, depending on the Sweep dictionary keys, for the Pulse Scheme PulList.
+    
+    This function is a generalization of the sweep0(Pulse,P,p,t).
+    It calls it and maps it over every Pulse in the list of pulses PulList.
+    If two pulses overlap, their amplitude is added up.
+    P gives the number of sample points for the overal pulse scheme, not to be confused with dt, the sweeping time step given by P
+    The pulse sequence is generated in the order that the pulses have within the PulseList.
+    """
+    
+    #time interval
+    time = np.linspace(0,t,N)
+    
+    #Each pulse will be an array, and an entry of a bigger array (we have an array of arrays)
+    pularray=np.array([sweep0(Pulse,P,p,t,N) for Pulse in PulList['Pulse Scheme']])
+        
+    #the final pulse scheme will be the overlap of each individual pulse, given by the sum of their arrays    
+    pulscheme = np.sum(pularray,0)
+    
+    #we divide the pulse scheme in order to play it several times
+    #teil = int(pulscheme0.size/PulList['Number of repetitions'])
+    #pulscheme = np.tile(pulscheme0[:teil],PulList['Number of repetitions'])
         
     return pulscheme, time
 
