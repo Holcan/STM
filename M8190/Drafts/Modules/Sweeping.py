@@ -75,7 +75,7 @@ def Sweep(PulList,P,p,t,N):
         
     return pulscheme, time
         
-def Sweep_teil(PulList,P,p,t,N):
+def Sweep_dir(PulList,P,p,t,N):
     
     """Function that perfoms or not a Sweep, depending on the Sweep dictionary keys, for the Pulse Scheme PulList.
     
@@ -102,7 +102,7 @@ def Sweep_teil(PulList,P,p,t,N):
     return pulscheme, time
 
 
-def Sweep_dir_noteil(PulList,P,p,t,N):
+def Sweepteil0(PulList,P,p,t,N):
     
     """Function that perfoms or not a Sweep, depending on the Sweep dictionary keys, for the Pulse Scheme PulList.
     
@@ -143,27 +143,6 @@ def Sweep_Iteration(PulList,P,t,N,start,stop):
     
     for p in range(0,L+1):
         pultau[(p)],time= Sweep(PulList,P,p+start,t,N) 
-
-    #this dictionary is for obtaining the proper name 
-    #Intervaldict={'start':start,'stop':stop,'interval':L}
-
-    return pultau, time
-
-def Sweep_Iteration_teil(PulList,P,t,N,start,stop):
-
-    """ This function iterates the Sweep function over the smaller interval [start,stop] for a given pulse list PulList
-
-        This function creates an array, whose entries are the corresponding pulse sequences
-        at different sweeping steps p, starting at the sweeping step p =start and ending at sweeping step p=stop.
-        The sweeping advance step is 1. 
-        The set [start,stop] must be contained in the bigger set [0,P].
-        In order to access a specific sweeping step use the Sweeping function instead.
-    """
-    L = (stop-start)
-    pultau = np.zeros((L+1,N))
-    
-    for p in range(0,L+1):
-        pultau[(p)],time= Sweep_teil(PulList,P,p+start,t,N) 
 
     #this dictionary is for obtaining the proper name 
     #Intervaldict={'start':start,'stop':stop,'interval':L}

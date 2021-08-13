@@ -845,21 +845,3 @@ def Sweeping_Single_List_File(PulseList,P,t,N,start,stop,AWG_Settings_Dict,cycle
         Loc1,DF1,timm = Sweep_Iteration_CSV_List(PulseList,P,t,N,start,stop,AWG_Settings_Dict,0)
 
     return Loc1, DF1, timm
-
-def Sweeping_Single_List_File(PulseList,P,t,N,start,stop,AWG_Settings_Dict,cycle):
-
-    """ Given a pulse scheme list, this functions iterates the pulse scheme from start to stop.
-
-        This function firts creates the corresponding pulse sequence csv data given the PulseList using the Sweep_iteration_csv function
-        
-    """
-    
-    if cycle == 'A':
-        #Markers for cycle A
-        Loc1,DF1,timm = Sweep_Iteration_CSV_List(PulseList,P,t,N,start,stop,AWG_Settings_Dict,1)
-
-    if cycle == 'B':
-        #Markers for cycle B
-        Loc1,DF1,timm = Sweep_Iteration_CSV_List(PulseList,P,t,N,start,stop,AWG_Settings_Dict,0)
-
-    return Loc1, DF1, timm

@@ -80,18 +80,4 @@ def Sweep_Iteration_CSV_List(PulList,P,t,N,start,stop,AWG_Settings_Dict,marker):
 
     return StrngName, DataFrames, time
 
-def Sweep_Iteration_CSV_List_teil(PulList,P,t,N,start,stop,AWG_Settings_Dict,marker):
-    
-    """This function combinates the Sweep_Iteration function with the Sweep_Iteration_CSV_Arrays function.
 
-        Using the Sweep_Iteration function it creates numpy arrays corresponding to the pulse squemes at different sweep steps accordingly to the pulse Sweep keys in the 
-        dictionaries of the PulList list. 
-        Then it uses the Sweep_Iteration_CSV_Arrays function to import this numpy arrays to csv data files, with the desired markers given by the marker parameter, similar as in the 
-        CSV_PD functiuon.
-        It returns the same StrngName and DataFrames dictionary  as the Sweep_Iteration_CSV_Arrays function.
-    """
-
-    pultau,time = Sweep_Iteration_teil(PulList,P,t,N,start,stop)
-    StrngName, DataFrames = Sweep_Iteration_CSV_Arrays(pultau,AWG_Settings_Dict,marker,start)
-
-    return StrngName, DataFrames, time
