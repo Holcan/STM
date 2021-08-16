@@ -1,6 +1,7 @@
 import numpy as np
 import time
 from time import sleep
+from numpy.lib.function_base import average
 import pandas as pd
 from Sweeping import *
 from Dictionaries import * 
@@ -863,3 +864,28 @@ def Sweeping_Single_List_File_teil(PulseList,P,t,N,start,stop,AWG_Settings_Dict,
         Loc1,DF1,timm = Sweep_Iteration_CSV_List_teil(PulseList,P,t,N,start,stop,AWG_Settings_Dict,0)
 
     return Loc1, DF1, timm
+
+
+
+def Measurement_Autocorrelation_voltage(instrument,DAQ_settings,sampling_rate,playingtime,fileA,fileB,location):
+    """This function loads a sweeping sequence into the AWG, plays it and triggers it with the DAQ and afterwards records the values with the DAQ.
+
+
+        The sweeping is performed with the Sequence_Loader_File_DAQ_no function, and the measurement data is storaged in the folder given by location.
+        It stores the invidivual values for each sweep, as well as the averaged version after removing the Lock-In_Offset, which is the initial time in
+        which the Lock In perfomrs weird measurements (negativa and oscilating values). The offset is given at 2.5 seconds.
+    """
+
+    Data = Sequence_Loader_File_DAQ_np(instrument,DAQ_settings,sampling_rate,playingtime,fileA,fileB)
+
+    for i in range(0,len(Data)):
+        np.savetxt(r'{loc}\diode_signal_step{stp}_{dur}daqtime_5ms.csv'.format(loc = location ,stp = i,dur = playingtime), Data[i][0], delimiter=',') 
+
+    LockIn_Offset = np.zeros((len(Data)),  dtype=object)
+    for i in range(0,len(Data)):
+        LockIn_Offset[i] = Data[i][0][2500:] 
+
+    averaged_data = np.array([np.average(i) for i in LockIn_Offset])
+    np.savetxt(r'{loc}\averaged signal_31steps_{dur}sdaqtime.csv'.format(loc =location,dur = playingtime),averaged_data,delimiter=',')
+
+    return averaged_data
