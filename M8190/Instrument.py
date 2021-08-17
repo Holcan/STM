@@ -876,7 +876,7 @@ def Measurement_Autocorrelation_voltage(instrument,DAQ_settings,sampling_rate,pl
         which the Lock In perfomrs weird measurements (negativa and oscilating values). The offset is given at 2.5 seconds.
     """
 
-    Data = Sequence_Loader_File_DAQ_np(instrument,DAQ_settings,sampling_rate,playingtime,fileA,fileB)
+    Data,time = Sequence_Loader_File_DAQ_np(instrument,DAQ_settings,sampling_rate,playingtime,fileA,fileB)
 
     for i in range(0,len(Data)):
         np.savetxt(r'{loc}\diode_signal_step{stp}_{dur}daqtime_5ms.csv'.format(loc = location ,stp = i,dur = playingtime), Data[i][0], delimiter=',') 
@@ -888,4 +888,4 @@ def Measurement_Autocorrelation_voltage(instrument,DAQ_settings,sampling_rate,pl
     averaged_data = np.array([np.average(i) for i in LockIn_Offset])
     np.savetxt(r'{loc}\averaged signal_31steps_{dur}sdaqtime.csv'.format(loc =location,dur = playingtime),averaged_data,delimiter=',')
 
-    return averaged_data
+    return time,Data,averaged_data
