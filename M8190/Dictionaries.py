@@ -79,7 +79,7 @@ DAQ_Settings1 = {
     'Maximum Voltage Marker' : 9,
     'Maximum Current': 0.01,
     'Minimum Current' : -0.01,
-    'Sampling Frequency' : 400000,
+    'Sampling Frequency' : 1000,
     'Data Directory': r'D:\Documentos\STM\Python Pulses\S1' #path of home computer file!
 }
 
