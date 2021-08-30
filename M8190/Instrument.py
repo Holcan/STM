@@ -867,7 +867,7 @@ def Sweeping_Single_List_File_teil(PulseList,P,t,N,start,stop,AWG_Settings_Dict,
 
 
 
-def Measurement_Autocorrelation_voltage(instrument,DAQ_settings,sampling_rate,playingtime,fileA,fileB,location):
+def Measurement_Autocorrelation_voltage(instrument,DAQ_settings,sampling_rate,playingtime,fileA,fileB,location,Lock_In):
     """This function loads a sweeping sequence into the AWG, plays it and triggers it with the DAQ and afterwards records the values with the DAQ.
 
 
@@ -876,16 +876,17 @@ def Measurement_Autocorrelation_voltage(instrument,DAQ_settings,sampling_rate,pl
         which the Lock In perfomrs weird measurements (negativa and oscilating values). The offset is given at 2.5 seconds.
     """
 
-    Data,time = Sequence_Loader_File_DAQ_np(instrument,DAQ_settings,sampling_rate,playingtime,fileA,fileB)
+    Diode_Signal = Sequence_Loader_File_DAQ_np(instrument,DAQ_settings,sampling_rate,playingtime,fileA,fileB)
 
-    for i in range(0,len(Data)):
-        np.savetxt(r'{loc}\diode_signal_step{stp}_{dur}daqtime_5ms.csv'.format(loc = location ,stp = i,dur = playingtime), Data[i][0], delimiter=',') 
+    #Saving the individual raw measurements:
+    for i in range(0,len(Diode_Signal)):
+        np.savetxt(r'{loc}\diode_signal_step{stp}_{f}sdaqtime_{mod}_{tc}_{sens}.csv'.format(loc = location ,stp = i,f = playingtime, mod = Lock_In['Modulation'] ,tc = Lock_In['Time Constant'], sens = Lock_In['Sensitivity']), Diode_Signal[i][0], delimiter=',')  
 
-    LockIn_Offset = np.zeros((len(Data)),  dtype=object)
-    for i in range(0,len(Data)):
-        LockIn_Offset[i] = Data[i][0][2500:] 
+    LockIn_Offset = np.zeros((len(Diode_Signal)),  dtype=object)
+    for i in range(0,len(Diode_Signal)):
+        LockIn_Offset[i] = Diode_Signal[i][0][3000:] 
 
     averaged_data = np.array([np.average(i) for i in LockIn_Offset])
-    np.savetxt(r'{loc}\averaged signal_31steps_{dur}sdaqtime.csv'.format(loc =location,dur = playingtime),averaged_data,delimiter=',')
+    np.savetxt(r'{loc}\averaged signal_31steps_{dur}sdaqtime_{mod}_{tc}_{sens}.csv'.format(loc =location,dur = playingtime,  mod = Lock_In['Modulation'] , tc = Lock_In['Time Constant'], sens = Lock_In['Sensitivity']),averaged_data,delimiter=',')
 
-    return time,Data,averaged_data
+    return Diode_Signal, averaged_data
