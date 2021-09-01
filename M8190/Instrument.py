@@ -890,3 +890,30 @@ def Measurement_Autocorrelation_voltage(instrument,DAQ_settings,sampling_rate,pl
     np.savetxt(r'{loc}\averaged signal_31steps_{dur}sdaqtime_{mod}_{tc}_{sens}.csv'.format(loc =location,dur = playingtime,  mod = Lock_In['Modulation'] , tc = Lock_In['Time Constant'], sens = Lock_In['Sensitivity']),averaged_data,delimiter=',')
 
     return Diode_Signal, averaged_data
+
+
+
+def Dummy_File(instrument):
+    """function that loads an empty pulse file to the AWG. The current file location is given in file
+    
+        This function calls the Segment_file function to load the given csv file into the AWG.
+        It firts changes the sequencing mode to arbitrary (since the initialization function sets it to sequencing),
+        then the file is loaded, the sequencing is initiated and triggered. It now follows a wait time of 5 seconds.
+        Finally the sequencing is stopped and the mode is changed back to sequence
+
+        instrument : refers to the object class given by pyvisa (through the function Visa in this module)
+    """
+    file = r'D:\\Alejandro\\Pulses\\Dict\\S5\\SegmentB_30000000_0.csv'
+
+    instrument.write('FUNC1:MODE ARB')
+
+    Segment_File(instrument,file,1)
+
+    instrument.write('INNIT:IMM')
+    instrument.write('TRIG:BEG1 ')
+
+    time.sleep(5)
+
+    instrument.write('ABOR')
+    instrument.write(':FUNC1:MODE STS')
+    instrument.write('TRAC:DEL:ALL')
