@@ -72,7 +72,7 @@ def Initialization(instrument,AWG_Settings_Dict):
     instrument.write('INIT:GATE1 0')
     instrument.write('INIT:CONT1 0')
     instrument.write('FUNC1:MODE {mode}'.format( mode = AWG_Settings_Dict['Mode']))
-    instrument.write(':DAC1:VOLT:OFFS 0.00{value}'.format(value = 3 ))
+    instrument.write(':DAC1:VOLT:OFFS 0.00{value}'.format(value = 3 )) #why?
     instrument.query('*OPC?')
 
     
@@ -471,7 +471,7 @@ def DAQ_Measuringhalf(DAQ_settings,playingtime):
 
     measuring_task.start()
 
-    data = np.array(measuring_task.read(int(samples,timeout=50.0)))
+    data = np.array(measuring_task.read(int(samples,timeout=180.0)))
 
     measuring_task.stop()
     measuring_task.close()
@@ -517,7 +517,7 @@ def DAQ_Measuringms(DAQ_settings,sr,playingtime,instrument):
     
     trig_task.write(1.5)
     #time.sleep(3)
-    data = np.array(measuring_task.read(samples,timeout=50.0))
+    data = np.array(measuring_task.read(samples,timeout=180.0))
 
 
     
@@ -578,7 +578,7 @@ def DAQ_Measuring(DAQ_settings,sr,playingtime,instrument):
     
     trig_task.write(1.5)
     #time.sleep(3)
-    data = np.array(measuring_task.read(samples,timeout=50.0))
+    data = np.array(measuring_task.read(samples,timeout=180.0))
 
 
     
@@ -736,7 +736,7 @@ def DAQ_Measuring_Markers(DAQ_settings,sr,playingtime,instrument):
     
     trig_task.write(1.5)
     #time.sleep(3)
-    data = np.array(measuring_task.read(samples,timeout=50.0))
+    data = np.array(measuring_task.read(samples,timeout=180.0))
 
 
     
@@ -805,7 +805,7 @@ def DAQ_Measuring_Markersms(DAQ_settings,sr,playingtime,instrument):
     
     trig_task.write(1.5)
     #time.sleep(3)
-    data = np.array(measuring_task.read(samples,timeout=50.0))
+    data = np.array(measuring_task.read(samples,timeout=180.0))
 
 
     
@@ -909,11 +909,13 @@ def Dummy_File(instrument):
 
     Segment_File(instrument,file,1)
 
+    instrument.query('*OPC?')
     instrument.write('INNIT:IMM')
     instrument.write('TRIG:BEG1 ')
-
+    print('Dummy File Loaded and playing')
     time.sleep(5)
 
     instrument.write('ABOR')
     instrument.write(':FUNC1:MODE STS')
     instrument.write('TRAC:DEL:ALL')
+    print('Dummy File stopped and erased from AWGs memmory')
