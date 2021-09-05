@@ -103,9 +103,9 @@ DAQ_Settings2 = {
 Rabi = {
     'Name':'Rabi',
     'Amplitude':400,
-    'Start time':0,
+    'Start time':200,
     'End time':2e-10,
-    'Start Duration':1,
+    'Start Duration':100    ,
     'End Duration':6,
     'Sweep time':0,
     'Sweep Duration':0
@@ -204,9 +204,9 @@ ProbesB = {
 Probe1 = {
     'Name':'Probe1',
     'Amplitude':310,
-    'Start time':2,
-    'End time':12,
-    'Start Duration':3,
+    'Start time':0,
+    'End time':400,
+    'Start Duration':100,
     'End Duration':6,
     'Sweep time':1,
     'Sweep Duration':0

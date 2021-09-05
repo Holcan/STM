@@ -23,11 +23,11 @@ def CSV_PD(pulse_array0,AWG_Settings_Dict,marker,step):
 
     #marker condition
     if marker == 0:
-        Markers = pd.DataFrame(np.zeros((len(pulse_array),2),dtype=int),columns=['SyncMarker1','SampleMarker1'])
+        Markers = pd.DataFrame(np.zeros((len(pulse_array),2),dtype=np.int8),columns=['SyncMarker1','SampleMarker1'])
         segment = 'B'
 
     if marker == 1:
-        Markers = pd.DataFrame(np.ones((len(pulse_array),2),dtype=int),columns=['SyncMarker1','SampleMarker1'])
+        Markers = pd.DataFrame(np.ones((len(pulse_array),2),dtype=np.int8),columns=['SyncMarker1','SampleMarker1'])
         segment ='A'
 
     #Appending the markers    
