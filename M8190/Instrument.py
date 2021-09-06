@@ -23,7 +23,7 @@ def VisaR(AWG_Settings_Dict,time):
     The Visa Address is given by corresponding key in the AWG_Settings_Dict dictionary.
     The time should be given in miliseconds.
     It prints the instruments manufacturer, model, serial number.
-    It outputs the instruments pyvisa resource object
+    It outputs the instruments pyvisa resource object class
     """
     rm = visa.ResourceManager()
     inst = rm.open_resource('{visa}'.format( visa = AWG_Settings_Dict['Visa Resource Name']))
@@ -68,7 +68,7 @@ def Initialization(instrument,AWG_Settings_Dict):
     instrument.write(':SOUR:MARK1:SAMP:VOLT:AMPL 0.17') #Voltage Amplitude for the Sample Marker 1 channel, it was a weir behaviour
     instrument.write(':SOUR:MARK1:SAMP:VOLT:OFFS 0.01') #Voltage Offset for the Sample Marker 1 channel, it was a weir behaviour
     
-    #Initializing the Sequence Function Mode
+    #Initializing the Sequencing Mode
     instrument.write('INIT:GATE1 0')
     instrument.write('INIT:CONT1 0')
     instrument.write('FUNC1:MODE {mode}'.format( mode = AWG_Settings_Dict['Mode']))
@@ -851,7 +851,18 @@ def Sweeping_Single_List_File_teil(PulseList,P,t,N,start,stop,AWG_Settings_Dict,
 
     """ Given a pulse scheme list, this functions iterates the pulse scheme from start to stop.
 
-        This function firts creates the corresponding pulse sequence csv data given the PulseList using the Sweep_iteration_csv function
+        It will return: the data frame Loc1 which correspond to a dictionarie whose keys are the ordered file paths to the csv files corresponding to different sweeping steps
+        DF1 is a Dictionary containing the Data Frames of the csv files created.
+        timm: Numpy array of the time interval of the pulse, between (0,t)
+
+        PulseList: type  Dictionary, containing the pulse scheme in the key "Pulse Scheme"
+        P: type int, total number of sweeping steps
+        t: type  int, total time length of the pulse scheme
+        N: type  int, Total number of the data Samples for the waveform
+        start: type int,Starting sweeping step
+        stop: type int, Final Sweeping Step, it must be lower or equal than the total number of sweeping steps
+        AWG_Settings_Dict: type Dictionary, of the AWG Settings, the function will use the 'Data Directory' key to store the CSV files at the file path given there
+        cycle: type  string, only two options are available 'A' which will assign markers to the waveform data and 'B' which wont assing markers to the waveform data
         
     """
     
