@@ -100,6 +100,75 @@ DAQ_Settings2 = {
 
 
 
+#Pulse Dictionaries:
+
+Pump_100micro = {
+    'Name':'Pump_100micro',
+    'Amplitude':35,
+    'Start time':200,
+    'End time':2e-10,
+    'Start Duration':100,
+    'End Duration':60,
+    'Sweep time':0,
+    'Sweep Duration':0
+}
+
+ProbeA_100micro = {
+    'Name':'ProbeA_100micro',
+    'Amplitude':20,
+    'Start time':0,
+    'End time':400,
+    'Start Duration':100,
+    'End Duration':60,
+    'Sweep time':1,
+    'Sweep Duration':0
+}
+
+ProbeB_100micro = {
+    'Name':'ProbeB_100micro',
+    'Amplitude':0,
+    'Start time':0,
+    'End time':12,
+    'Start Duration':1,
+    'End Duration':6,
+    'Sweep time':0,
+    'Sweep Duration':0
+}
+
+Pump_10micro = {
+    'Name':'Pump_10micro',
+    'Amplitude':35,
+    'Start time':20,
+    'End time':2e-10,
+    'Start Duration':10,
+    'End Duration':60,
+    'Sweep time':0,
+    'Sweep Duration':0
+}
+
+ProbeA_10micro = {
+    'Name':'ProbeA_10micro',
+    'Amplitude':20,
+    'Start time':0,
+    'End time':40,
+    'Start Duration':10,
+    'End Duration':60,
+    'Sweep time':1,
+    'Sweep Duration':0
+}
+
+ProbeB_10micro = {
+    'Name':'ProbeB_100micro',
+    'Amplitude':0,
+    'Start time':0,
+    'End time':12,
+    'Start Duration':1,
+    'End Duration':6,
+    'Sweep time':0,
+    'Sweep Duration':0
+}
+
+
 Rabi = {
     'Name':'Rabi',
     'Amplitude':400,
@@ -294,4 +363,32 @@ Nano_ListB =  {
     'Name' : 'Nano_ListB',
     'Pulse Scheme': [PumpN, ProbeNB],
     'Number of repetitions': 1,
+}
+
+PulseScheme_A_100micro =  {
+    'Name' : 'PulseScheme_A_100micro',
+    'Pulse Scheme': [Pump_100micro,ProbeA_100micro],
+    'Number of repetitions': 8,
+    'Measurement file Path': r'D:\Alejandro\Pulses\diode measurements\Autocorrelation measurements\100micro'
+}
+
+PulseScheme_B_100micro  = {
+    'Name' : 'PulseScheme__100micro',
+    'Pulse Scheme': [ProbeB_100micro,ProbeB_100micro],
+    'Number of repetitions': 1,
+    'Measurement file Path': r'D:\Alejandro\Pulses\diode measurements\Autocorrelation measurements\100micro'
+}
+
+PulseScheme_A_10micro =  {
+    'Name' : 'PulseScheme_A_10micro',
+    'Pulse Scheme': [Pump_10micro,ProbeA_10micro],
+    'Number of repetitions': 50,
+    'Measurement file Path': r'D:\Alejandro\Pulses\diode measurements\Autocorrelation measurements\10micro'
+}
+
+PulseScheme_B_10micro  = {
+    'Name' : 'PulseScheme__100micro',
+    'Pulse Scheme': [ProbeB_10micro,ProbeB_10micro],
+    'Number of repetitions': 1,
+    'Measurement file Path': r'D:\Alejandro\Pulses\diode measurements\Autocorrelation measurements\10micro'
 }
