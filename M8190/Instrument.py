@@ -930,3 +930,32 @@ def Dummy_File(instrument):
     instrument.write(':FUNC1:MODE STS')
     instrument.write('TRAC:DEL:ALL')
     print('Dummy File stopped and erased from AWGs memmory')
+
+
+def Voltage_Autocorrelation(instrument,DAQ_settings,playingtime,fileA,fileB,location,Lock_In):
+    
+    """ This function loads a sweeping sequence into the AWG, plays it and triggers it with the DAQ, while also storing the DAQ values as csv files.
+      
+        Sequences are formed within the AWG by combining the csv files at the same step in fileA and fileB
+
+        instrument = object class given by Pyvisa API of the current connected device
+        DAQ_Settings = Dictionary, with the settings of the DAQ box
+        playingtime = int, total data collection time of the DAQ, given in seconds, maximum is 180s (given by the timeout time in the DAQ_Measuring function)
+        fileA = dictionary, with the file paths of the csv files to be loaded into the awg as first part of the sequence
+        fileB = dictionary, with the file paths of the csv files to be loaded into the awg as second part of the sequence
+        location = strng, file path were the data is going to be saved
+        Lock_In = dictionary, the keys are the Lock In Amplifier settings used to address them in the file name
+    """
+    #empty arrays where the data will be stored
+    measurement_data = np.zeros((len(fileA),2),  dtype=object)
+    average = np.zeros((len(fileA)))
+
+    for i,j,k in zip(fileA, fileB,range(0,len(fileA))):
+        Sequence_File(instrument,fileA[i],fileB[j],1)
+        measurement_data[k][0], measurement_data[k][1] = DAQ_Measuring(DAQ_settings,DAQ_settings['Sampling Frequency'],playingtime,instrument)
+        np.savetxt(r'{loc}\diode_signal_step{stp}_{f}sdaqtime_{mod}_{tc}_{sens}.csv'.format(loc = location ,stp = k,f = playingtime, mod = Lock_In['Modulation'] ,tc = Lock_In['Time Constant'], sens = Lock_In['Sensitivity']), measurement_data[k][0], delimiter=',')
+        average[k] = np.average(measurement_data[k][0][3000:])
+        print('Average Value for measurement at step {step} is'.format(step = k),average[k],'V')
+        np.savetxt(r'{loc}\averaged signal_31steps_{dur}sdaqtime_{mod}_{tc}_{sens}.csv'.format(loc =location,dur = playingtime,  mod = Lock_In['Modulation'] , tc = Lock_In['Time Constant'], sens = Lock_In['Sensitivity']),average,delimiter=',')
+        
+    return measurement_data, average
