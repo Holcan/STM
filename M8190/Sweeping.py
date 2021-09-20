@@ -190,3 +190,65 @@ def Param(t,Δt):
 
     return N,sr
     
+
+def Granularity(samples):
+    """ This function takes the number of samples and converts it to the closest number that satisfies the granularity
+        of 48  
+
+        samples: int
+    """
+    
+    x = int((samples /48)+1)* 48
+    
+    return x
+
+#tilecycle 
+def Tc(modulation,loop):
+    """
+    This function takes modulation and number as an argument and returns the time length in seconds of the segment that will build up a cycle
+
+
+    modulation: int, desired frequency in Herz to use as a reference signal for the Lock-In Amplifier
+    loop: int, desired number of repetitions that will build up the whole cycle
+    """
+
+    tiled_cycle = (1/2) * (1/ (loop * modulation) )
+
+    return tiled_cycle
+
+def div(samples):
+    """ 
+    Checks whether a number of samples is ddivisible by the granularity of 48
+    
+    samples: int, number of samples to be checked
+    """
+    statement = samples % 48 == 0
+
+    return statement
+
+
+def Adj(resolution,modulation,repetitions):
+    """
+        Returns the correct AWG sampling frecuency and number of samples of the segment that satisfies the desired parameters and granularity. 
+
+    this function takes the desired time resolution, modulation frequency and number of repetitions and will return the appropiate sampling frequency for the AWG and number
+    of samples to build the whole segment cycle, following also the restriction given by the granularity of the AWG.
+
+    
+    """
+
+    time_length_segment = Tc(modulation,repetitions)
+
+    samples0,sampling_frequency0 = Param(time_length_segment,resolution)
+
+    if div(samples0) == True:
+        return samples0,sampling_frequency0
+
+    else:
+        adjusted_samples = Granularity(samples0)
+        adjusted_sr = int(adjusted_samples/time_length_segment)
+
+        return adjusted_samples, adjusted_sr
+        
+
+    
