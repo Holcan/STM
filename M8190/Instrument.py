@@ -168,9 +168,10 @@ def Sequence_File(instrument,file0,file1,loop):
     and starting and ending address correspond to the first and last value of the data files.
     
     """
-    Segment_File(instrument, file0, 1)
+    Segment_File(instrument, file0, 1) #theis segment Id should be updating in order to store the whole sequence and not just overwritting over segment 1 and 2 
     Segment_File(instrument, file1, 2)
 
+    
     #Define the corresponding Sequence:
     seq_id = Def_Sequence(instrument,loop)
     return seq_id
@@ -341,7 +342,13 @@ def Trigger_Pulse(daq,channel,amp,duration):
     """This function generates a constant voltage pulse, with amplitude amp, over the time duration with the DAQ Box.
     
     This uses the nidaqmx API for interacting with the NI DAQ box, after the time duraion ends, the voltage amplitude is set to 0
-    The name of the DAQ box (daq) as well as the channel must be provided. Maximum amp value is 4
+    The name of the DAQ box (daq) as well as the channel must be provided. Maximum amp value is 4.
+    After the time duration has passed, the amplitude of the voltage pulse will be set to zero.
+
+    daq: strng, name of the DAQbox
+    channel: strng, name of the channel that will output the voltage pulse
+    amp: int, amplitude of the voltage pulse in volts
+    durantion: int, time duration of the voltage pulse in seconds
     """
     trig_task =  nidaqmx.Task()
     trig_task.ao_channels.add_ao_voltage_chan('{a}/{b}'.format(a = daq, b = channel),'triggering',-4,4)
@@ -549,7 +556,7 @@ def DAQ_Measuring(DAQ_settings,sr,playingtime,instrument):
       triggerinvoltage should be in volts.
     """
     instrument.write('INIT:IMM')
-    time.sleep(5)
+    time.sleep(3)
 
 
     #Calculating the number of samples given the samplig frecuency and playing time
@@ -583,7 +590,7 @@ def DAQ_Measuring(DAQ_settings,sr,playingtime,instrument):
 
     
     #time.sleep(3)
-    print('Triggering Pulse Stoped')
+    #print('Triggering Pulse Stoped')
     trig_task.write(0)
 
     
@@ -683,7 +690,8 @@ def Sequence_Loader_File_DAQ_np(instrument,DAQ_settings,sampling_rate,playingtim
     LocationA is a dictionary, whose elements are the file paths to the csv files that are going to be loaded as SegmentA into the sequence.
     LocationB is a dictionary, whose elemnts re the filepaths to the csv files that are going to be loaded as SegmentB into the sequence
     It uses the Sequence_File function to load the csv files to the instrument.
- 
+    
+
     """
     measurement_data = np.zeros((len(fileA),2),  dtype=object)
     #measurement_data = {}
@@ -778,7 +786,7 @@ def DAQ_Measuring_Markersms(DAQ_settings,sr,playingtime,instrument):
     measuring_time = np.linspace(0,playingtime,samples)
 
     instrument.write('INIT:IMM')
-    time.sleep(5)
+    time.sleep(2)
 
     #setting the tasks
     measuring_task = nidaqmx.Task()
@@ -914,7 +922,7 @@ def Dummy_File(instrument):
 
         instrument : refers to the object class given by pyvisa (through the function Visa in this module)
     """
-    file = r'D:\\Alejandro\\Pulses\\Dict\\S5\\SegmentB_30000000_0.csv'
+    file = r'D:\\Alejandro\\Pulses\\Dict\\S5\\SegmentA_30000000_0.csv'
 
     instrument.write('FUNC1:MODE ARB')
 
@@ -960,6 +968,12 @@ def Voltage_Autocorrelation(instrument,DAQ_settings,playingtime,fileA,fileB,loca
         
     return measurement_data, average
 
+<<<<<<< Updated upstream
+=======
+
+
+
+>>>>>>> Stashed changes
 def Voltage_Autocorrelation_loop(instrument,DAQ_settings,playingtime,fileA,fileB,location,Lock_In,loop):
     
     """ This function loads a sweeping sequence into the AWG, plays it and triggers it with the DAQ, while also storing the DAQ values as csv files.
@@ -991,6 +1005,7 @@ def Voltage_Autocorrelation_loop(instrument,DAQ_settings,playingtime,fileA,fileB
 
 
 
+<<<<<<< Updated upstream
 def div_test(samp,time_int):
     """ 
     
@@ -1019,3 +1034,136 @@ def Gran_find(starting_freq,ending_freq,time_int):
         else:
             sol[j] = 0
     return sol
+=======
+
+def Granularity(samples):
+    """ This function takes the number of samples and converts it to the closest number that satisfies the granularity
+        of 48  
+    """
+    
+    x = int((samples /48)+1)* 48
+    
+    return x
+
+
+
+def Voltage_Autocorrelation_loop5(instrument,DAQ_settings,playingtime,fileA,fileB,location,Lock_In,loop):
+    
+    """ This function loads a sweeping sequence into the AWG, plays it and triggers it with the DAQ, while also storing the DAQ values as csv files.
+      
+        Sequences are formed within the AWG by combining the csv files at the same step in fileA and fileB
+
+        instrument = object class given by Pyvisa API of the current connected device
+        DAQ_Settings = Dictionary, with the settings of the DAQ box
+        playingtime = int, total data collection time of the DAQ, given in seconds, maximum is 180s (given by the timeout time in the DAQ_Measuring function)
+        fileA = dictionary, with the file paths of the csv files to be loaded into the awg as first part of the sequence
+        fileB = dictionary, with the file paths of the csv files to be loaded into the awg as second part of the sequence
+        location = strng, file path were the data is going to be saved
+        Lock_In = dictionary, the keys are the Lock In Amplifier settings used to address them in the file name
+        loop = int, number of repetitions that each waveform will repeat itself per cycle
+    """
+    #empty arrays where the data will be stored
+    measurement_data = np.zeros((len(fileA),2),  dtype=object)
+    average = np.zeros((len(fileA)))
+
+    for i,j,k in zip(fileA, fileB,range(0,len(fileA))):
+        Sequence_File(instrument,fileA[i],fileB[j],loop)
+        measurement_data[k][0], measurement_data[k][1] = DAQ_Measuring(DAQ_settings,DAQ_settings['Sampling Frequency'],playingtime,instrument)
+        np.savetxt(r'{loc}\diode_signal_step{stp}_{f}sdaqtime_{mod}_{tc}_{sens}.csv'.format(loc = location ,stp = k,f = playingtime, mod = Lock_In['Modulation'] ,tc = Lock_In['Time Constant'], sens = Lock_In['Sensitivity']), measurement_data[k][0], delimiter=',')
+        average[k] = np.average(measurement_data[k][0][5000:])
+        print('Average Value for measurement at step {step} is'.format(step = k),average[k],'V')
+        np.savetxt(r'{loc}\averaged signal_31steps_{dur}sdaqtime_{mod}_{tc}_{sens}.csv'.format(loc =location,dur = playingtime,  mod = Lock_In['Modulation'] , tc = Lock_In['Time Constant'], sens = Lock_In['Sensitivity']),average,delimiter=',')
+        
+    return measurement_data, average
+
+
+def Voltage_Autocorrelation_loopl(instrument,DAQ_settings,playingtime,fileA,fileB,location,Lock_In,loop):
+    
+    """ This function loads a sweeping sequence into the AWG, plays it and triggers it with the DAQ, while also storing the DAQ values as csv files.
+      
+        Sequences are formed within the AWG by combining the csv files at the same step in fileA and fileB
+
+        instrument = object class given by Pyvisa API of the current connected device
+        DAQ_Settings = Dictionary, with the settings of the DAQ box
+        playingtime = int, total data collection time of the DAQ, given in seconds, maximum is 180s (given by the timeout time in the DAQ_Measuring function)
+        fileA = dictionary, with the file paths of the csv files to be loaded into the awg as first part of the sequence
+        fileB = dictionary, with the file paths of the csv files to be loaded into the awg as second part of the sequence
+        location = strng, file path were the data is going to be saved
+        Lock_In = dictionary, the keys are the Lock In Amplifier settings used to address them in the file name
+        loop = int, number of repetitions that each waveform will repeat itself per cycle
+    """
+    #empty arrays where the data will be stored
+    measurement_data = np.zeros((len(fileA),2),  dtype=object)
+    average = np.zeros((len(fileA)))
+
+    for i,j,k in zip(range(0,len(fileA)), range(0,len(fileB)),range(0,len(fileA))):
+        Sequence_File(instrument,fileA[i],fileB[j],loop)
+        measurement_data[k][0], measurement_data[k][1] = DAQ_Measuring(DAQ_settings,DAQ_settings['Sampling Frequency'],playingtime,instrument)
+        np.savetxt(r'{loc}\diode_signal_step{stp}_{f}sdaqtime_{mod}_{tc}_{sens}.csv'.format(loc = location ,stp = k,f = playingtime, mod = Lock_In['Modulation'] ,tc = Lock_In['Time Constant'], sens = Lock_In['Sensitivity']), measurement_data[k][0], delimiter=',')
+        average[k] = np.average(measurement_data[k][0][3000:])
+        print('Average Value for measurement at step {step} is'.format(step = k),average[k],'V')
+        np.savetxt(r'{loc}\averaged signal_31steps_{dur}sdaqtime_{mod}_{tc}_{sens}.csv'.format(loc =location,dur = playingtime,  mod = Lock_In['Modulation'] , tc = Lock_In['Time Constant'], sens = Lock_In['Sensitivity']),average,delimiter=',')
+        
+    return measurement_data, average
+
+
+
+
+def Voltage_Autocorrelation_loop_cut(instrument,DAQ_settings,playingtime,fileA,fileB,location,Lock_In,loop,cut):
+    
+    """ This function loads a sweeping sequence into the AWG, plays it and triggers it with the DAQ, while also storing the DAQ values as csv files.
+      
+        Sequences are formed within the AWG by combining the csv files at the same step in fileA and fileB
+
+        instrument = object class given by Pyvisa API of the current connected device
+        DAQ_Settings = Dictionary, with the settings of the DAQ box
+        playingtime = int, total data collection time of the DAQ, given in seconds, maximum is 180s (given by the timeout time in the DAQ_Measuring function)
+        fileA = dictionary, with the file paths of the csv files to be loaded into the awg as first part of the sequence
+        fileB = dictionary, with the file paths of the csv files to be loaded into the awg as second part of the sequence
+        location = strng, file path were the data is going to be saved
+        Lock_In = dictionary, the keys are the Lock In Amplifier settings used to address them in the file name
+        loop = int, number of repetitions that each waveform will repeat itself per cycle
+        cut = int cut time in seconds
+    """
+    #empty arrays where the data will be stored
+    cut_off = int(cut*1000)
+    measurement_data = np.zeros((len(fileA),2),  dtype=object)
+    average = np.zeros((len(fileA)))
+
+    for i,j,k in zip(fileA, fileB,range(0,len(fileA))):
+        Sequence_File(instrument,fileA[i],fileB[j],loop)
+        measurement_data[k][0], measurement_data[k][1] = DAQ_Measuring(DAQ_settings,DAQ_settings['Sampling Frequency'],playingtime,instrument)
+        np.savetxt(r'{loc}\diode_signal_step{stp}_{f}sdaqtime_{mod}_{tc}_{sens}.csv'.format(loc = location ,stp = k,f = playingtime, mod = Lock_In['Modulation'] ,tc = Lock_In['Time Constant'], sens = Lock_In['Sensitivity']), measurement_data[k][0], delimiter=',')
+        average[k] = np.average(measurement_data[k][0][cut_off:])
+        print('Average Value for measurement at step {step} is'.format(step = k),average[k],'V')
+        np.savetxt(r'{loc}\averaged signal_31steps_{dur}sdaqtime_{mod}_{tc}_{sens}.csv'.format(loc =location,dur = playingtime,  mod = Lock_In['Modulation'] , tc = Lock_In['Time Constant'], sens = Lock_In['Sensitivity']),average,delimiter=',')
+        
+    return measurement_data, average
+
+
+
+
+def AutoCorrelation_Normalized(data,time_delay,starting_points,end_points):
+    """This function removes the background signal of the autocorrelation functions by fitting a straight line to the first and last points
+        of the autocorrelation function.
+    
+    data: array, the Y values of the averaged autocorrelation function
+    time_delay: array, the X valeus of the averaged autocorrelation function
+    starting_points: int, number of points of the first part of the AutoCorrelation function to be used in the linear fitting
+    end_points: int, number of points of the final part of the AutoCorrelation function to be used in the linear fitting
+    """
+    #saving the points of interest in a separeate array
+    points_to_fit = np.concatenate((data[:starting_points], data[-end_points:]))
+    time_delay_to_fit = np.concatenate((time_delay[:starting_points],time_delay[-end_points:] ))
+
+    #fitting a straight line the previosly defined set
+    fitted_slope,fitted_intercep = np.polyfit(time_delay_to_fit,points_to_fit,1)
+
+    #calculating autocor with fit
+    fitted_autocor = np.array([fitted_intercep + fitted_slope*x for x in time_delay])
+
+    #normalizing
+    normalized_autocor = fitted_autocor/data
+
+    return normalized_autocor, fitted_intercep, fitted_slope       
+>>>>>>> Stashed changes

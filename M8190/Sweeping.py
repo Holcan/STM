@@ -191,11 +191,46 @@ def Param(t,Δt):
     return N,sr
     
 
+<<<<<<< Updated upstream
 def Granularity(samples):
     """ This function takes the number of samples and converts it to the closest number that satisfies the granularity
         of 48  
 
         samples: int
+=======
+def div_test(sampling_frequency,time_int):
+    """ 
+    
+    
+    
+    """
+    samples = sampling_frequency * time_int
+
+    statement = samples % 48 == 0
+
+    return statement
+
+
+def Gran_find(starting_freq,ending_freq,time_int):
+    """ from the interval of frequency given, this function checks whether there us a multiple of 48 ot satisfy the granularity
+    
+    
+    
+    """
+    samp_interval = np.arange(starting_freq,ending_freq)
+    sol = np.zeros((len(samp_interval)))
+
+    for i,j in zip(samp_interval,range(0,len(sol))):
+        if div_test(i,time_int) == True:
+            sol[j] = i
+        else:
+            sol[j] = 0
+    return sol
+
+def Granularity(samples):
+    """ This function takes the number of samples and converts it to the closest number that satisfies the granularity
+        of 48  
+>>>>>>> Stashed changes
     """
     
     x = int((samples /48)+1)* 48
@@ -226,6 +261,7 @@ def div(samples):
 
     return statement
 
+<<<<<<< Updated upstream
 
 def Adj(resolution,modulation,repetitions):
     """
@@ -235,6 +271,11 @@ def Adj(resolution,modulation,repetitions):
     of samples to build the whole segment cycle, following also the restriction given by the granularity of the AWG.
 
     
+=======
+def Adj(resolution,modulation,repetitions):
+    """
+    240 minimum length
+>>>>>>> Stashed changes
     """
 
     time_length_segment = Tc(modulation,repetitions)
@@ -251,4 +292,78 @@ def Adj(resolution,modulation,repetitions):
         return adjusted_samples, adjusted_sr
         
 
+<<<<<<< Updated upstream
     
+=======
+
+def Adj_minimum(modulation,repetitions):
+    """ This function returns the proper sampling frequency and segment time length for waveforms with 240 samples, given the desired modulation frequency and number of repetitios
+    
+
+    modulation: int, desired modulation frequenxy in Herz to be used as a reference signal in the Lock-In Amplifier
+    repetitions: int, desired number of repetitions (loop number). the total duration of one cycle will be split into this number
+    """
+
+    time_length_segment = Tc(modulation,repetitions)
+
+    minimum_sample_length = 240 
+
+    sampling_frequency0 = 1/6800000000
+
+
+    return minimum_sample_length,sampling_frequency0, time_length_segment
+
+
+
+def Adj9(resolution,modulation,repetitions):
+    """This function returns the proper sampling frequency and segment time length for waveforms with 240 samples, given the desired modulation frequency and number of repetitios
+
+        The minimal segment length is 240
+
+    resolution: int, desired  time resolution for the pulse scheme 
+    modulation: int, desired modulation frequenxy in Herz to be used as a reference signal in the Lock-In Amplifier
+    repetitions: int, desired number of repetitions (loop number). the total duration of one cycle will be split into this number
+    
+    """
+
+    time_length_segment = Tc(modulation,repetitions)
+
+    samples0,sampling_frequency0 = Param(time_length_segment,resolution)
+
+    if samples0 < 240 :
+        samples0 = 240
+        sampling_frequency0 = int(samples0/time_length_segment)
+        return samples0,sampling_frequency0
+
+    else :
+        if div(samples0) == True:
+            return samples0,sampling_frequency0
+        else:
+            adjusted_samples = Granularity(samples0)
+            adjusted_sr = int(adjusted_samples/time_length_segment)
+
+            return adjusted_samples, adjusted_sr, time_length_segment
+
+
+
+    
+def Adj_minimum2(modulation,repetitions):
+    """ This function returns the proper sampling frequency and segment time length for waveforms with 240 samples, given the desired modulation frequency and number of repetitios
+    
+
+    modulation: int, desired modulation frequenxy in Herz to be used as a reference signal in the Lock-In Amplifier
+    repetitions: int, desired number of repetitions (loop number). the total duration of one cycle will be split into this number
+    """
+
+    time_length_segment = Tc(modulation,repetitions)
+
+    sample_length = 240 
+
+    sampling_frequency0 = int(sample_length / time_length_segment)
+
+    while  not sampling_frequency0 in range(125e6,8e9+1):
+        sample_length =sample_length  + 48
+        sampling_frequency0 = int(sample_length / time_length_segment)
+
+    return sample_length, sampling_frequency0, time_length_segment
+>>>>>>> Stashed changes
